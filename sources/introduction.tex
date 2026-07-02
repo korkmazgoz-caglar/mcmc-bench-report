@@ -1,33 +1,54 @@
 \chapter{Introduction}
 \label{ch:introduction}
 
-Write your introduction here. A good introduction motivates the problem, states the research questions you aim to answer, and closes with an outline of the thesis structure. Back up important claims with citations.\footnote{A Bachelor's thesis is typically around 50 pages; a Master's thesis around 80 pages. The exact length depends on your programme and the scope of your research.}
+I will just make the framing here. Parameter uncertainty is a key problem in many scientific and engineering applications. In this report, I will focus on the Bayesian calibration of the Voellmy mass flow model via an R-based RobustGaSP surrogate served through UM-Bridge (I do not think I even need that explanations but since that is a report, it might be better to mention them). The main goal is to benchmark a number of samplers against the same sampler-agnostic posterior in a Nextflow pipeline. The samplers we will consider are emcee, rwmcmc, dynesty...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Motivation}
 \label{sec:motivation}
 
-Describe the broader context and explain why the problem you are tackling is relevant. What gap in existing work does your thesis address? Why should the reader care?\footnote{Use citations to ground your motivation in the literature. Unsupported claims weaken the introduction.}
+Motivation (broad problem -> Bayesian -> sampling -> benchmarking)
+
+Consider a common situation in computational science: we have a physical model of a process, and we have a set of measurements of that process. The model contains parameters that cannot be measured directly and must instead be chosen such that the model output matches the observations. In this work, the process is a mass flow event described by the Voellmy friction model, and the unknown parameters are the friction coefficients $\mu$ and $\xi$.
+
+[Here, I want to insert a graphical illustration]
+
+A natural first attempt is deterministic: search for the single parameter combination that fits the data best, for example by minimizing the misfit between model output and measurements. In practice, this approach runs into three difficulties. First, the measurements are noisy, so a parameter set that reproduces the data exactly is partly fitting measurement error rather than the underlying physics. Second, the problem is often ill-posed: distinct parameter combinations can produce nearly indistinguishable model outputs, so the "best" point returned by an optimizer is only one of many almost equally plausible answers, and the method gives no indication that the others exist. Third, the model itself is imperfect, since it is a simplified description of reality, and in our case it is additionally replaced by a surrogate for computational reasons, so no single parameter value can be regarded as the true one. A single number therefore answers the wrong question. The question we actually need to answer is: \emph{which parameter values are consistent with the observations, and how plausible is each of them?}
+
+This question calls for a distribution over parameters rather than a point estimate, and this is precisely what the Bayesian approach provides. Bayesian calibration treats the parameters as random variables: prior knowledge, such as physically admissible ranges, is encoded in a prior distribution, and the measurements update this prior into a posterior distribution via the likelihood. The posterior captures everything the data can tell us about the parameters, including how uncertain we remain and how parameters trade off against each other. This uncertainty can then be propagated to model predictions, which matters whenever the model informs real decisions, as is the case for mass flow hazard assessment.
+
+The posterior is hard to compute. Markov chain Monte Carlo (MCMC) methods and their relatives are the standard tools for this task.
+
+Yet "use a sampler" is not the end of the story, because samplers differ substantially in how they explore the posterior. Random-walk Metropolis-Hastings is simple but requires manual tuning; ensemble methods such as emcee reduce the tuning burden; nested sampling, as implemented in dynesty, follows a different principle altogether and additionally estimates the model evidence (I will add other samplers here). These methods differ in convergence behavior, which is exactly the situation in this work, where the model is an R-based Gaussian process surrogate accessed through UM-Bridge. The choice of sampler is therefore consequential but far from obvious. This report addresses that gap by benchmarking many different samplers on the same calibration problem, with an identical posterior definition and an identical pipeline, so that the observed differences can be attributed to the samplers themselves.
+\footnote{I can give some resources here, like the papers of packages and "Handbook of Monte Carlo Methods"}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Research Questions}
 \label{sec:research-questions}
 
-State the specific research questions or objectives of your thesis. For example:
+Our research questions are as follows:
 
 \begin{itemize}
-  \item[\textit{RQ1}] Your first research question.
-  \item[\textit{RQ2}] Your second research question.
-  \item[\textit{RQ3}] Your third research question.
+  \item[\textit{RQ1}] Do emcee, rwmcmc, dynesty, and other  samplers converge to consistent posterior estimates for the  Voellmy friction parameters $\mu$ and $\xi$?
+  \item[\textit{RQ2}] How do the all samplers compare in computational cost?
+  \item[\textit{RQ3}] Which implementation challenges arise when integrating each sampler into the same pipeline and how can they be resolved?
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Outline}
 \label{sec:outline}
 
-Briefly describe what each chapter covers. For example:
+The remainder of this report is organized as follows.
 
-Chapter~\ref{ch:relatedwork} surveys the existing literature and positions this work within it.
-Chapter~\ref{ch:ownwork} presents the approach and its implementation.
-Chapter~\ref{ch:evaluation} evaluates the approach against the research questions.
-Chapter~\ref{ch:summary} summarises the contributions and outlines directions for future work.
+Chapter~\ref{ch:relatedwork} reviews the methodological background:
+Mathematics, Bayesian calibration, the all samplers under comparison, and the interfacing tools on which the benchmark is built.
+
+Chapter~\ref{ch:ownwork} presents the rwmcmc (my implementation so it might be better to start with), other samplers' logics,the pipeline work, benchmark itself, sampler-agnostic definition of the posterior, the integration of each sampler into a common pipeline, and the implementation challenges encountered along the way, together with their solutions.
+
+Chapter~\ref{ch:evaluation} compares the samplers
+against the research questions: consistency of the resulting
+posteriors, convergence diagnostics, and computational cost.
+
+Chapter~\ref{ch:summary} summarizes the findings, discusses the
+limitations of the study, and outlines directions for future work.
+

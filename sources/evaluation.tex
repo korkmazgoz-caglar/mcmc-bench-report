@@ -1,42 +1,28 @@
 \chapter{Evaluation}
 \label{ch:evaluation}
 
-This chapter evaluates your contribution against the research questions stated in Chapter~\ref{ch:introduction}. Define clear evaluation criteria before presenting results — what does success look like?\footnote{A good evaluation is systematic: it states what is being measured, how, and why that measure is meaningful.}
+Short chapter opening: the samplers are compared against the research questions from Chapter~\ref{ch:introduction} - consistency of the posteriors (RQ1), computational cost (RQ2); the integration experience (RQ3) was covered in Section~\ref{sec:implementation-challenges}. One paragraph.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Experimental Setup}
 \label{sec:experimental-setup}
 
-Describe the conditions under which your evaluation was conducted. Include datasets, baselines, metrics, and any relevant hardware or software configuration.\footnote{Be precise enough that someone else could replicate your evaluation.}
+Everything needed to reproduce the comparison: the calibration data; the priors on mu and xi (and noise sigma if calibrated); the settings of each sampler (nwalkers/nsteps/burn-in for emcee, nchains/step size for rwmcmc, nlive/stopping criterion for dynesty) and how these were chosen to make the comparison fair; software versions and hardware; the fact that all samplers ran through the same Nextflow pipeline against the same surrogate.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Metrics}
 \label{sec:metrics}
 
-Define the metrics you use to assess your approach. Explain why each metric is appropriate for your research questions.
+Which quantities are compared and why each is meaningful. Posterior agreement: means, credible intervals, corner plots across samplers. Convergence diagnostics: R-hat and effective sample size (ESS), what they measure, and the caveat that R-hat is undefined for nested sampling (no chains) - why ESS is the appropriate diagnostic for dynesty. Computational cost: wall-clock time and number of forward model evaluations, and why model evaluations matter more than raw time when the forward model dominates the budget.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
 \label{sec:eval-results}
 
-Present the evaluation results. Use tables and figures to summarise comparisons across conditions or baselines.
-
-\begin{table}[ht]
-  \centering
-  \begin{tabular}{lcc}
-    \toprule
-    \textbf{Method} & \textbf{Metric A} & \textbf{Metric B} \\
-    \midrule
-    Baseline   & 0.00 & 0.00 \\
-    Your method & 0.00 & 0.00 \\
-    \bottomrule
-  \end{tabular}
-  \caption{Comparison of your method against the baseline across evaluation metrics.}
-  \label{tab:eval-results}
-\end{table}
+The measured outcomes, presented objectively. Posterior comparison: corner plots of all samplers side by side (or overlaid), a table of posterior means and credible intervals for mu and xi per sampler. Diagnostics table: R-hat (where defined) and ESS per sampler, including the dynesty R-hat FAIL as a false negative with ESS confirming convergence. Timing table: wall-clock and model evaluations per sampler. Figures and tables to be copied from the mcmc-bench outputs at the end. Basically, the results file in the report.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}
 \label{sec:eval-discussion}
 
-Interpret the evaluation results. Do they support your hypotheses? Where does your approach perform well and where does it struggle? Relate findings back to the research questions.\footnote{If results are mixed or negative, discuss why — this is valuable scientific contribution in itself.}
+Interpretation of the results, mapped back to the research questions. RQ1: do the posteriors agree, and within what tolerance. RQ2: which sampler is cheapest per effective sample, and how the non-parallelizable forward model shapes this comparison. Trade-offs: tuning burden vs. robustness vs. extra outputs (evidence from nested sampling). Honest limitations of the comparison itself (single problem, single surrogate, settings not exhaustively tuned).
