@@ -17,7 +17,19 @@ A natural first attempt is deterministic: search for the single parameter combin
 
 This question calls for a distribution over parameters rather than a point estimate, and this is precisely what the Bayesian approach provides. Bayesian calibration treats the parameters as random variables: prior knowledge, such as physically admissible ranges, is encoded in a prior distribution, and the measurements update this prior into a posterior distribution via the likelihood. The posterior captures everything the data can tell us about the parameters, including how uncertain we remain and how parameters trade off against each other. This uncertainty can then be propagated to model predictions, which matters whenever the model informs real decisions, as is the case for mass flow hazard assessment.
 
-The posterior is hard to compute. Markov chain Monte Carlo (MCMC) methods and their relatives are the standard tools for this task.
+The posterior is known only up to a normalizing constant and has no closed form, so it can only be explored by methods that evaluate it point by point --- MCMC methods and their relatives are the standard tools for this task.
+
+\[
+p(\theta \mid y)
+=
+\text{an unknown distribution}
+\]
+
+\[
+p(\theta \mid y)
+\propto
+p(y \mid \theta)\,p(\theta)
+\]
 
 Yet "use a sampler" is not the end of the story, because samplers differ substantially in how they explore the posterior. Random-walk Metropolis-Hastings is simple but requires manual tuning; ensemble methods such as emcee reduce the tuning burden; nested sampling, as implemented in dynesty, follows a different principle altogether and additionally estimates the model evidence (I will add other samplers here). These methods differ in convergence behavior, which is exactly the situation in this work, where the model is an R-based Gaussian process surrogate accessed through UM-Bridge. The choice of sampler is therefore consequential but far from obvious. This report addresses that gap by benchmarking many different samplers on the same calibration problem, with an identical posterior definition and an identical pipeline, so that the observed differences can be attributed to the samplers themselves.
 \footnote{I can give some resources here, like the papers of packages and "Handbook of Monte Carlo Methods"}
