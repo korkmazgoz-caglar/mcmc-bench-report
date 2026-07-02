@@ -77,23 +77,23 @@
   \singlespacing
 \fi
 
-\newacronym[description={Principal component analysis}]{PCA}{PCA}{principal component analysis}
-\newacronym                                            {SNF}{SNF}{Smith normal form}
-\newacronym[description={Topological data analysis}]   {TDA}{TDA}{topological data analysis}
+% \newacronym[description={Principal component analysis}]{PCA}{PCA}{principal component analysis}
+% \newacronym                                            {SNF}{SNF}{Smith normal form}
+% \newacronym[description={Topological data analysis}]   {TDA}{TDA}{topological data analysis}
 
-\newglossaryentry{LaTeX}{%
-  name        = {\LaTeX},
-  description = {A document preparation system},
-  sort        = {LaTeX},
-}
+% \newglossaryentry{LaTeX}{%
+%   name        = {\LaTeX},
+%   description = {A document preparation system},
+%   sort        = {LaTeX},
+% }
 
-\newglossaryentry{Real numbers}{%
-  name        = {$\real$},
-  description = {The set of real numbers},
-  sort        = {Real numbers},
-}
+% \newglossaryentry{Real numbers}{%
+%   name        = {$\real$},
+%   description = {The set of real numbers},
+%   sort        = {Real numbers},
+% }
 
-\makenoidxglossaries
+% \makenoidxglossaries
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Ordinals
@@ -121,19 +121,20 @@
 % For project reports, leave both false — the academic integrity declaration will be omitted.
 \newif\ifmasterthesis
 \newif\ifbachelorthesis
-% \masterthesistrue  % <-- change this
+\masterthesisfalse  % <-- change this
+\bachelorthesisfalse  % <-- change this
 
-\title{Your Thesis Title}
-\newcommand{\germantitle}{Deutscher Titel der Thesis}
-\author{Your Name}
+\title{Benchmarking Sampling Methods for Probabilistic Calibration in Mass Flow Model}
+\newcommand{\germantitle}{}
+\author{Enes Çağlar Korkmazgöz}
 
 \begin{document}
 
 \frontmatter
   \include{sources/title}
   \include{sources/abstract}
-  \include{sources/acknowledgements}
-  \include{sources/declarationofownwork}
+%  \include{sources/acknowledgements}
+%  \include{sources/declarationofownwork}
 
   \tableofcontents
   \listoffigures
@@ -141,15 +142,15 @@
   \listoftables
   \addcontentsline{toc}{chapter}{\listtablename}
 
-  \begingroup
-    \let\clearpage\relax
-    \glsaddall
-    \printnoidxglossary[type=\acronymtype]
-    \newpage
-    \printnoidxglossary
-  \endgroup
+  % \begingroup
+  %   \let\clearpage\relax
+  %   \glsaddall
+  %   \printnoidxglossary[type=\acronymtype]
+  %   \newpage
+  %   \printnoidxglossary
+  % \endgroup
 
-  \include{sources/conventions}
+  % \include{sources/conventions}
 
 \mainmatter
   \include{sources/introduction}

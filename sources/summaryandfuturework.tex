@@ -1,28 +1,23 @@
 \chapter{Summary and Future Work}
 \label{ch:summary}
 
-Briefly restate the problem you addressed and summarise how your work contributes to solving it. This chapter should give a reader who skips to the end a clear picture of what was done and what comes next.
+Short chapter opening: one paragraph restating the problem (sampler choice for Bayesian calibration of the mass flow model) and what the report contributes.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Summary}
 \label{sec:summary}
 
-Revisit your research questions from Chapter~\ref{ch:introduction} and state concisely how each was addressed. Highlight your key contributions.\footnote{Avoid simply repeating the abstract — this section should reflect on the work as a whole, now that the reader has seen all the details.}
-
-\begin{itemize}
-  \item[\textit{RQ1}] How your first research question was answered.
-  \item[\textit{RQ2}] How your second research question was answered.
-  \item[\textit{RQ3}] How your third research question was answered.
-\end{itemize}
+Research question by research question: RQ1 - whether the samplers produced consistent posteriors for mu and xi (answer from Section~\ref{sec:eval-results}); RQ2 - how the computational costs compared; RQ3 - the main implementation challenges (pickling, parallelization limits, environment pinning) and their solutions. Key contribution: a sampler-agnostic benchmarking pipeline that makes such comparisons repeatable.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Limitations}
 \label{sec:limitations}
 
-Discuss the boundaries of your work — what assumptions were made, what was out of scope, and what threats to validity exist.\footnote{Acknowledging limitations honestly strengthens rather than weakens your thesis.}
+Boundaries of the study: a single calibration problem and a single (surrogate) forward model; results may not transfer to higher-dimensional posteriors; the surrogate replaces the true simulator, so calibration quality is bounded by surrogate quality; sampler settings chosen reasonably but not exhaustively optimized; the single-worker constraint of the R-based model shapes the cost comparison for parallel cases. Also, the study focuses on a specific type of Bayesian calibration problem, and the results may not be directly applicable to other types of problems.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Future Work}
 \label{sec:future-work}
 
-Identify open questions and promising directions that follow from your work. What would you do differently with more time? What problems does your work open up that did not exist before?
+The pipeline is designed to grow: integration of the planned samplers (flowMC, cdream, PyMC, Pigeons.jl - Section~\ref{sec:sampler-integration}), which broadens the comparison to flow-accelerated, differential-evolution, and parallel tempering methods. Beyond samplers: higher-dimensional calibration (more parameters, noise), alternative forward models, and lifting the single-worker constraint (e.g., multiple surrogate instances) to make parallel cost comparisons meaningful.
+Lastly, the surrogate model does not create gradients, so the pipeline cannot yet compare gradient-based samplers against the others. Future work could include a differentiable surrogate to enable such comparisons or we can add some methods like Algorithmic Differentiation (AD) to the existing surrogate to make it differentiable. This would allow for the integration of gradient-based samplers and provide a more comprehensive comparison of sampling methods for Bayesian calibration problems.
