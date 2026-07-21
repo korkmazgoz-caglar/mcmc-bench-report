@@ -1,66 +1,52 @@
 \chapter{Introduction}
 \label{ch:introduction}
 
-I will just make the framing here. Parameter uncertainty is a key problem in many scientific and engineering applications. In this report, I will focus on the Bayesian calibration of the Voellmy mass flow model via an R-based RobustGaSP surrogate served through UM-Bridge (I do not think I even need that explanations but since that is a report, it might be better to mention them). The main goal is to benchmark a number of samplers against the same sampler-agnostic posterior in a Nextflow pipeline. The samplers we will consider are emcee, rwmcmc, dynesty...
+The source code, workflow definitions, and configuration files of this study are publicly available in the \href{https://github.com/thealanjason/mcmc-bench}{\texttt{mcmc-bench} GitHub repository}.
+
+Computational models are widely used to represent and predict the behaviour of complex systems, but their predictions often depend on input parameters whose values are unknown for the application under study. Model calibration uses observations of the physical system to learn about these unknown inputs by adjusting the corresponding model parameters. This connection between observations and model parameters is important not only for improving predictive performance, but also for representing the uncertainty that remains after calibration and accounting for discrepancies between the simulator and reality \autocite{Kennedy2001}.
+
+Bayesian inference provides a formal framework for \emph{learning from experience}. Existing knowledge or assumptions about unknown quantities are represented by a prior distribution, while observations enter the analysis through the likelihood. Combining these two sources of information produces the posterior distribution, which expresses what has been learned after observing the data \autocite{Zyphur2015}. This principle is not restricted to a particular application area; Bayesian methods are widely used to reason about uncertain parameters and predictions across a broad range of scientific disciplines \autocite{vanDeSchoot2021}. In model calibration, the posterior therefore describes which parameter values remain plausible after seeing the model with observations, rather than returning only a single fitted value \autocite{Kennedy2001}.
+
+All of the model parameters do not have the same interpretation. Physical parameters have meaning within the scientific description of a system, although their values may be unknown or difficult to measure directly from the physical system. On the other hand, tuning parameters have no direct physical interpretation; they are often introduced as simplified representations of processes that the simulator does not explicitly resolve and are adjusted to improve agreement with observations \autocite{Brynjarsdottir2014}. This distinction affects how calibration results should be interpreted: learning about a physical parameter may provide information about the system, whereas an inferred tuning parameter remains specific to the model. In the Voellmy model considered here, $\mu$ and $\xi$ enter the resistance law as dry-Coulomb and turbulent friction coefficients, respectively. However, they are effective, conceptual parameters rather than directly measurable material constants, and their values are commonly inferred by back-analysing observed events from the field data \autocite{Heredia2020,Yildiz2023}.
+
+Bayesian calibration typically requires repeated evaluations of the forward model, which might be expensive. A statistical emulator can be used to approximate the simulator outputs from a smaller set of precomputed runs; RobustGaSP provides Gaussian-process emulators for this purpose \autocite{Gu2024,Yildiz2023}. The benchmark in this report therefore operates on an existing RobustGaSP surrogate of the gravity-driven mass flow model rather than executing the full simulator during sampling. All integrated samplers use this same surrogate model and target the same sampler-agnostic posterior. Here, sampler-agnostic means that the prior and likelihood, and therefore the mathematical target distribution, are defined independently of the sampling algorithm. The benchmark can thus evaluate how accurately and efficiently each method approximates the same target, while recognizing that finite-run and implementation effects may still produce different numerical results.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Motivation}
 \label{sec:motivation}
 
-Motivation (broad problem -> Bayesian -> sampling -> benchmarking)
+Gravity-driven mass flow models simulate the runout of avalanches, debris flows, and related flow-like landslides, providing estimates of quantities such as flow depth, velocity, and impact area. These outputs points hazard maps and quantitative risk assessments and can inform mitigation planning and model-based decision support \autocite{Yildiz2023}. Their practical value, however, depends on the reliability of the simulated event behaviour. Because the effective resistance parameters cannot  be measured directly, they must be calibrated against observations, and the uncertainty associated with this calibration must be considered when interpreting model predictions \autocite{Heredia2020,Yildiz2023}.
 
-Consider a common situation in computational science: we have a physical model of a process, and we have a set of measurements of that process. The model contains parameters that cannot be measured directly and must instead be chosen such that the model output matches the observations. In this work, the process is a mass flow event described by the Voellmy friction model, and the unknown parameters are the friction coefficients $\mu$ and $\xi$.
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\textwidth]{images/kowalski-topography-mass-dsstribution-bondo-landslide.png}
+  \caption{Topography and release mass distribution of the 2017 Bondo landslide, together with the simulated impact area and deposit distribution for Voellmy parameters $\mu = 0.23$ and $\xi = 1000\,\mathrm{m\,s^{-2}}$. Reproduced without modification from \textcite[Fig.~2]{ZhaoKowalski2022} under the \href{https://creativecommons.org/licenses/by/4.0/}{CC BY 4.0 license}.}
+  \label{fig:bondo-topography}
+\end{figure}
 
-[Here, I want to insert a graphical illustration]
+A deterministic calibration can be formulated as an optimization problem that returns a parameter vector minimizing the discrepancy between model outputs and observations. However, observations contain measurement error. If these sources of error are not represented explicitly, the fitted parameters may include noise leading to biased conclusions \autocite{Kennedy2001,Brynjarsdottir2014}. Calibration may also suffer from identifiability problems: different parameter combinations, or different allocations between parameters and model discrepancy, can explain the observations similarly well \autocite{Arendt2012}. Consequently, a single best point does not account for the result. The relevant question is instead: \emph{which combinations of parameter values are supported by the observations, and how is uncertainty distributed across those combinations?}
 
-A natural first attempt is deterministic: search for the single parameter combination that fits the data best, for example by minimizing the misfit between model output and measurements. In practice, this approach runs into three difficulties. First, the measurements are noisy, so a parameter set that reproduces the data exactly is partly fitting measurement error rather than the underlying physics. Second, the problem is often ill-posed: distinct parameter combinations can produce nearly indistinguishable model outputs, so the "best" point returned by an optimizer is only one of many almost equally plausible answers, and the method gives no indication that the others exist. Third, the model itself is imperfect, since it is a simplified description of reality, and in our case it is additionally replaced by a surrogate for computational reasons, so no single parameter value can be regarded as the true one. A single number therefore answers the wrong question. The question we actually need to answer is: \emph{which parameter values are consistent with the observations, and how plausible is each of them?}
+Bayesian calibration addresses this problem by representing uncertainty about model parameters through a posterior distribution rather than a single estimate. The prior has assumptions before observing the calibration data, while the likelihood describes how the observations relate to model outputs; together they define the posterior on the selected model and data \autocite{Kennedy2001}. Reliable predictive uncertainty quantification also requires consideration of model discrepancy and surrogate uncertainty \autocite{Brynjarsdottir2014,Yildiz2023}. Such study is not evaluated in this benchmark; here, the posterior serves as the common target distribution for all of the samplers.
 
-This question calls for a distribution over parameters rather than a point estimate, and this is precisely what the Bayesian approach provides. Bayesian calibration treats the parameters as random variables: prior knowledge, such as physically admissible ranges, is encoded in a prior distribution, and the measurements update this prior into a posterior distribution via the likelihood. The posterior captures everything the data can tell us about the parameters, including how uncertain we remain and how parameters trade off against each other. This uncertainty can then be propagated to model predictions, which matters whenever the model informs real decisions, as is the case for mass flow hazard assessment.
+When posterior quantities cannot be computed analytically, sampling algorithms are used to explore the target distribution \autocite[Sections~1--2]{Albert2025}. These samplers differ in how they handle challenging posterior geometries, and their relative accuracy and efficiency can depend on the structure of the target distribution and on implementation details \autocite[Abstract and Sections~1 and~4.1]{Albert2025}.
 
-The posterior is known only up to a normalizing constant and has no closed form, so it can only be explored by methods that evaluate it point by point - MCMC methods and their relatives are the standard tools for this task.
-
-\[
-p(\theta \mid y)
-=
-\text{an unknown distribution}
-\]
-
-\[
-p(\theta \mid y)
-\propto
-p(y \mid \theta)\,p(\theta)
-\]
-
-Yet "use a sampler" is not the end of the story, because samplers differ substantially in how they explore the posterior. Random-walk Metropolis-Hastings is simple but requires manual tuning; ensemble methods such as emcee reduce the tuning burden; nested sampling, as implemented in dynesty, follows a different principle altogether and additionally estimates the model evidence (I will add other samplers here). These methods differ in convergence behavior, which is exactly the situation in this work, where the model is an R-based Gaussian process surrogate accessed through UM-Bridge. The choice of sampler is therefore consequential but far from obvious. This report addresses that gap by benchmarking many different samplers on the same calibration problem, with an identical posterior definition and an identical pipeline, so that the observed differences can be attributed to the samplers themselves.
-\footnote{I can give some resources here, like the papers of packages and "Handbook of Monte Carlo Methods"}
+The samplers currently integrated into the benchmark use different Python packages and run in sampler-specific software environments. However, the \texttt{mcmc-bench} repository implements a modular and extensible benchmarking framework rather than a Python-only sampler interface. Its execution is orchestrated as a Nextflow workflow, while UM-Bridge exposes the surrogate through a language-agnostic model interface. This separation allows future sampling methods implemented in other programming languages to be integrated without modifying the model interface \autocite[Summary and Statement of Need]{Seelinger2023}. For the current comparison, all samplers are configured to use the same surrogate, prior, and likelihood, which together define the common sampler-agnostic posterior.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Research Questions}
 \label{sec:research-questions}
 
 Our research questions are as follows:
-
 \begin{itemize}
-  \item[\textit{RQ1}] Do emcee, rwmcmc, dynesty, and other  samplers converge to consistent posterior estimates for the  Voellmy friction parameters $\mu$ and $\xi$?
-  \item[\textit{RQ2}] How do the all samplers compare in computational cost?
-  \item[\textit{RQ3}] Which implementation challenges arise when integrating each sampler into the same pipeline and how can they be resolved?
+  \item[\textit{RQ1}] How can different sampling methods be integrated into a modular, extensible, and reusable framework for Bayesian calibration of a surrogate-based gravity-driven mass flow model?
+
+  \item[\textit{RQ2}]
+  Which accuracy, convergence, and computational-efficiency criteria enable a meaningful comparison of the integrated sampling methods, and how do the samplers perform according to these criteria in the Voellmy calibration case study?
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Outline}
 \label{sec:outline}
 
-The remainder of this report is organized as follows.
-
-Chapter~\ref{ch:relatedwork} reviews the methodological background:
-Mathematics, Bayesian calibration, the all samplers under comparison, and the interfacing tools on which the benchmark is built.
-
-Chapter~\ref{ch:ownwork} presents the rwmcmc (my implementation so it might be better to start with), other samplers' logics,the pipeline work, benchmark itself, sampler-agnostic definition of the posterior, the integration of each sampler into a common pipeline, and the implementation challenges encountered along the way, together with their solutions.
-
-Chapter~\ref{ch:evaluation} compares the samplers
-against the research questions: consistency of the resulting
-posteriors, convergence diagnostics, and computational cost.
-
-Chapter~\ref{ch:summary} summarizes the findings, discusses the
-limitations of the study, and outlines directions for future work.
+The followings of this report are organized as follows. Chapter~\ref{ch:relatedwork} introduces inverse problems, Bayesian calibration, surrogate modeling, and the selected sampling methods. Chapter~\ref{ch:ownwork} describes the common benchmarking framework and the integration of the five samplers. Chapter~\ref{ch:evaluation} presents the experimental setup, comparison criteria, results, and discussion. Finally, Chapter~\ref{ch:summary} summarizes the findings and outlines future work.
 

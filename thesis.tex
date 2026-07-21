@@ -1,7 +1,12 @@
 \documentclass{mimosis}
-
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily\small, language=Python,
+        commentstyle=\itshape\color{gray}, breaklines=true}
 \usepackage{metalogo}
-
+% \usepackage{tikz}
+% \usetikzlibrary{calc}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Some of my favourite personal adjustments
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -159,8 +164,8 @@
   \include{sources/evaluation}
   \include{sources/summaryandfuturework}
 
-\appendix
-  \include{sources/appendix}
+% \appendix
+%   \include{sources/appendix}
 
 % This ensures that the subsequent sections are being included as root
 % items in the bookmark structure of your PDF reader.

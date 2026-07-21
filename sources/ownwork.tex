@@ -1,102 +1,72 @@
 \chapter{Benchmarking Sampling Methods}
 \label{ch:ownwork}
 
-Short chapter opening: what we built and why a common pipeline in which all samplers target the identical posterior, so that differences in results can be attributed to the samplers themselves. One paragraph.
+This chapter presents the implementation of \texttt{mcmc-bench}, a common benchmarking framework integrating Random-Walk Metropolis-Hastings, emcee, dynesty, PyMC Slice, and PyMC Sequential Monte Carlo. The framework keeps the surrogate model, observations, prior distributions, likelihood, and quantification fixed while changing the sampler integration. All methods therefore target the same posterior and produce outputs in a common format, allowing their accuracy, convergence behavior, and sampling runtime to be evaluated consistently. The shared implementation is described first, followed by the sampler-specific integration details.
 
-\section{Design of the Calibration Framework}
-\label{sec:design}
+\section{Implementation Details}
+\label{sec:implementation-details}
 
-The sampler-agnostic posterior definition: Prior, LogPrior, LogLikelihood, LogPosterior classes shared by all samplers. Why this design: any sampler only needs a function that evaluates the (unnormalized) log-posterior pointwise, so the Bayesian model is defined once and reused. Supported prior distributions (uniform, normal, truncated normal) and optional noise calibration. Common output contract across samplers (mcmc\_output.npz, trace.npy, corner plot, ArviZ InferenceData) so that downstream diagnostics are identical. Here I can give a scheme of the class structure / data flow (parameters in, log-posterior out; sampler on top).
+All benchmark runs are controlled through a single YAML configuration file, which defines the surrogate model, observations, calibrated parameters, prior distributions, likelihood, and sampler-specific settings. In the present benchmark, the Voellmy friction parameters $\mu$ and $\xi$ are calibrated against the observed impact area using the uniform priors $\mu \sim \mathcal{U}(0.02,0.50)$ and $\xi \sim \mathcal{U}(400,4000)$. A Gaussian likelihood with a fixed noise standard deviation of $\sigma=0.05$ is used; although optional noise calibration is supported, it is disabled for the current comparison. Changing the selected sampler therefore leaves the statistical calibration problem unchanged and modifies only the sampler and its configuration.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Mathematical Framework}
-\label{sec:math}
+The pretrained RobustGaSP surrogate is exposed as an HTTP model using UM-Bridge. Each sampler connects to the same model server and sends candidate values of $\mu$ and $\xi$ through this interface. Although the surrogate computes full predictive statistics, the model server exposes only the predictive mean, which enters the Gaussian likelihood on the sampler side. 
 
-The formulas promised in Chapter 2: posterior proportional to likelihood times prior; Gaussian log-likelihood with (optionally calibrated) noise sigma; log-domain evaluation and why (numerical underflow). For dynesty: the unit-cube prior transform via the inverse CDF (ppf), and why nested sampling needs likelihood and prior separately instead of a combined log-posterior (avoiding double-counting the prior). Only equations that are referenced later.
+\begin{lstlisting}
+output = self.model.predict(x)
+# ScalarGaSP: (n, 4) -> [mean, lower, upper, std]
+return [output[:, 0].tolist()]
+# only column 0 = mean values are returned to the sampler
+\end{lstlisting}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Starting With the Basics: Random-Walk Metropolis Hastings (RWMH)}
-\label{sec:rwmh-sampler}
+The server is configured with a single worker. Moreover, the exposed model currently provides function evaluations but no gradient information, which restricts the benchmark to gradient-free samplers.
 
-Here, RWMCMC is the only package I wrote so I'll briefly explain how I did it with the code blocks. Also, I will explain the MCMC logic from that algorithm, and how it is implemented in the code. I will also explain the tuning parameters and their effects on the sampling process.
+The execution is orchestrated by a Nextflow workflow. It collects the surrogate and observation data, starts the UM-Bridge model server, and starts the process associated with the sampler selected in the configuration file. Each sampler runs in a separate Conda environment but receives the same configuration, observations, and model-server address. After sampling is complete, the model server is stopped and the generated outputs are passed to the common diagnostics and reporting processes.
+
+To be sure that the same diagnostics and report-generation steps can be applied to every sampler, all implementations follow a common output contract. Each sampler run produces a posterior trace, chain-structured samples, log-probability values (when available), the measured sampling runtime, the number of surrogate-model evaluations, a corner plot, and an ArviZ InferenceData file. The InferenceData (iData) representation is then used to generate trace, posterior, and autocorrelation plots together with effective sample size (ESS) and R-hat statistics where applicable. These files, the run configuration, and the automatically generated report are collected in the session's output folder.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Sampler Integration}
 \label{sec:sampler-integration}
 
-One subsection per sampler: how each one plugs into the shared posterior, its main tuning parameters, and how its output is mapped to the common contract.
+\subsection{Random-Walk Metropolis-Hastings}
+\label{sec:integration-rwmh}
+
+The RWMH integration uses the custom \texttt{rwmcmc} package and evaluates the common log-posterior directly. Each chain is initialized independently from the configured prior distributions and executed serially with a separate random-number generator. The proposal step sizes can be configured separately for $\mu$ and $\xi$, allowing their different numerical scales to be accommodated. After sampling, the configured burn-in period is removed, the retained chains are reshaped to the common output format, and an ArviZ InferenceData object is constructed explicitly for the shared diagnostics.
 
 \subsection{emcee}
 \label{sec:integration-emcee}
 
-Here I will explain each sampler in detail (under different headings), how do they work, what is important about them. I will also explain the tuning parameters and their effects on the sampling process.
+The emcee integration passes the same log-posterior function to an \texttt{EnsembleSampler}. Walker positions are initialized independently from the configured priors, while the number of walkers, number of sampling steps, and burn-in period are read from the common configuration. The package supports serial execution as well as thread- and process-based pools, although the present benchmark uses serial model evaluation. Following sampling, burn-in draws are removed and the emcee results are converted directly to the common arrays and ArviZ iData representation.
 
 \subsection{dynesty}
 \label{sec:integration-dynesty}
 
-done
+Unlike the MCMC integrations, dynesty requires the likelihood and prior to be supplied separately. A dedicated prior transform maps points from the unit hypercube to the configured parameter distributions using their inverse cumulative distribution functions. The static nested sampler is controlled through the number of live points, the evidence-based stopping tolerance, and the number of worker processes. Because dynesty returns weighted samples, these are converted into an equally weighted trace for compatibility with the common plotting and diagnostics interface. The estimated log-evidence and its uncertainty are additionally retained in the sampler output.
 
-\subsection{flowMC}
-\label{sec:integration-flowMC}
-planned
+\subsection{PyMC Slice and Sequential Monte Carlo}
+\label{sec:integration-pymc}
 
-\subsection{cdream}
-\label{sec:integration-cdream}
-planned
-\subsection{PyMC}
-\label{sec:integration-PyMC}
-planned
-\subsection{Pigeons.jl}
-\label{sec:integration-Pigeons-jl}
-planned
+\begin{lstlisting}[
+  caption={PyTensor adapter used to expose the UM-Bridge likelihood to PyMC.},
+  label={lst:umbridge-pytensor}
+]
+class UMBridgeLogLikelihood(Op):
+    itypes = [pt.dvector]
+    otypes = [pt.dscalar]
+
+    def __init__(self, log_likelihood):
+        self.log_likelihood = log_likelihood
+
+    def perform(self, node, inputs, outputs):
+        (parameters,) = inputs
+        value = self.log_likelihood.eval(parameters)
+        outputs[0][0] = np.asarray(value, dtype=np.float64)
+\end{lstlisting}
+
+Both PyMC integrations follow PyMC's documented black-box likelihood pattern by using the numerical UM-Bridge likelihood to PyTensor through the operation shown in Listing~\ref{lst:umbridge-pytensor} \autocite{Pitkin2024}. The operation accepts a "parameter" vector, evaluates the common likelihood through UM-Bridge, and returns a scalar log-likelihood. Since it defines numerical evaluation but no gradient operation, it is used with gradient-free sampling methods. The configured priors are recreated as PyMC random variables, and the external likelihood is added to the model as a potential. Both methods return an iData object directly, from which the posterior samples are reshaped into the common output format.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Implementation Challenges and Solutions}
-\label{sec:implementation-challenges}
+% \section{Implementation Challenges and Solutions}
+% \label{sec:implementation-challenges}
 
-The practical difficulties encountered while integrating the samplers, and how each was resolved. Pickling and multiprocessing: closures are not picklable (no importable top-level name), so the prior transform was refactored into a top-level class with \_\_call\_\_, instantiated inside Prior, why class instances work where closures fail. Parallelization of dynesty via fork context and the nprocs parameter. The rpy2 / R-based surrogate constraint: the forward model itself cannot be parallelized (single worker). Environment pinning: dynesty from conda-forge, matplotlib pin due to arviz incompatibility. Each challenge: symptom, cause, solution, lesson learned.
-
-% \begin{equation}
-%   f(x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(x - \mu)^2}{2\sigma^2}\right)
-%   \label{eq:example}
-% \end{equation}
-
-% For multiple related equations, use the \texttt{align} environment to align them at the equals sign:
-
-% \begin{align}
-%   \mu    &= \frac{1}{N} \sum_{i=1}^{N} x_i \\
-%   \sigma &= \sqrt{\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2}
-% \end{align}
-
-% Refer to equations by number in the text, e.g.\ Equation~\eqref{eq:example}.
-
-% \subsection{Implementation}
-% \label{sec:implementation}
-
-% Describe any relevant implementation details — tools, frameworks, datasets, or parameters used.\footnote{Be precise: include version numbers, dataset sizes, and hardware specs where relevant so that your work is reproducible.}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \section{Results}
-% \label{sec:results}
-
-% Present your results objectively. Use tables and figures to summarise findings, and refer to them explicitly in the text.
-
-% \begin{table}[ht]
-%   \centering
-%   \begin{tabular}{lcc}
-%     \toprule
-%     \textbf{Condition} & \textbf{Metric A} & \textbf{Metric B} \\
-%     \midrule
-%     Baseline  & 0.00 & 0.00 \\
-%     Your method & 0.00 & 0.00 \\
-%     \bottomrule
-%   \end{tabular}
-%   \caption{Summary of results. Cells contain mean values.}
-%   \label{tab:results}
-% \end{table}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \section{Discussion}
-% \label{sec:discussion}
-
-% Interpret your results in the context of your research questions and hypotheses. What do the findings mean? Where does your approach succeed and where does it fall short?\footnote{Be honest about limitations — a well-reasoned discussion of weaknesses is a sign of scientific maturity.}
