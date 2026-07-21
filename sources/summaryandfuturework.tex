@@ -1,23 +1,14 @@
 \chapter{Summary and Future Work}
 \label{ch:summary}
 
-Short chapter opening: one paragraph restating the problem (sampler choice for Bayesian calibration of the mass flow model) and what the report contributes.
+This report developed and evaluated \texttt{mcmc-bench}, a common framework for comparing sampling methods in Bayesian calibration. Five gradient-free samplers were integrated through a shared Nextflow workflow and UM-Bridge model interface.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Summary}
 \label{sec:summary}
 
-Research question by research question: RQ1 - whether the samplers produced consistent posteriors for mu and xi (answer from Section~\ref{sec:eval-results}); RQ2 - how the computational costs compared; RQ3 - the main implementation challenges (pickling, parallelization limits, environment pinning) and their solutions. Key contribution: a sampler-agnostic benchmarking pipeline that makes such comparisons repeatable.
+Regarding RQ1, the implementation shows that sampler-specific environments can be integrated while keeping the surrogate model, statistical problem, and output format fixed. Regarding RQ2, posterior summaries, convergence diagnostics, model evaluations, and sampling time provide a practical comparison of the methods. The samplers produced similar posterior estimates in the mass-flow case study, while dynesty was the most computationally efficient in the single benchmark run.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Limitations}
-\label{sec:limitations}
-
-Boundaries of the study: a single calibration problem and a single (surrogate) forward model; results may not transfer to higher-dimensional posteriors; the surrogate replaces the true simulator, so calibration quality is bounded by surrogate quality; sampler settings chosen reasonably but not exhaustively optimized; the single-worker constraint of the R-based model shapes the cost comparison for parallel cases. Also, the study focuses on a specific type of Bayesian calibration problem, and the results may not be directly applicable to other types of problems.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Future Work}
 \label{sec:future-work}
 
-The pipeline is designed to grow: integration of the planned samplers (flowMC, cdream, PyMC, Pigeons.jl - Section~\ref{sec:sampler-integration}), which broadens the comparison to flow-accelerated, differential-evolution, and parallel tempering methods. Beyond samplers: higher-dimensional calibration (more parameters, noise), alternative forward models, and lifting the single-worker constraint (e.g., multiple surrogate instances) to make parallel cost comparisons meaningful.
-Lastly, the surrogate model does not create gradients, so the pipeline cannot yet compare gradient-based samplers against the others. Future work could include a differentiable surrogate to enable such comparisons or we can add some methods like Algorithmic Differentiation (AD) to the existing surrogate to make it differentiable. This would allow for the integration of gradient-based samplers and provide a more comprehensive comparison of sampling methods for Bayesian calibration problems.
+The evaluation should be repeated with multiple runs, more thoroughly tuned settings, higher-dimensional calibration problems, and alternative models. Extending the model interface with gradient information would enable gradient-based samplers, while additional model workers and sampler implementations in other programming languages would broaden the benchmark.

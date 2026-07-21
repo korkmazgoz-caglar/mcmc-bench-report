@@ -1,7 +1,12 @@
 \documentclass{mimosis}
-
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily\small, language=Python,
+        commentstyle=\itshape\color{gray}, breaklines=true}
 \usepackage{metalogo}
-
+% \usepackage{tikz}
+% \usetikzlibrary{calc}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Some of my favourite personal adjustments
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,7 +129,7 @@
 \masterthesisfalse  % <-- change this
 \bachelorthesisfalse  % <-- change this
 
-\title{Benchmarking Sampling Methods for Probabilistic Calibration in Mass Flow Model}
+\title{Benchmarking of Sampling Methods for Probabilistic Calibration in Gravity-Driven Mass Flow Modeling}
 \newcommand{\germantitle}{}
 \author{Enes Çağlar Korkmazgöz}
 
@@ -134,7 +139,7 @@
   \include{sources/title}
   \include{sources/abstract}
 %  \include{sources/acknowledgements}
-%  \include{sources/declarationofownwork}
+ \include{sources/declarationofownwork}
 
   \tableofcontents
   \listoffigures
@@ -159,8 +164,8 @@
   \include{sources/evaluation}
   \include{sources/summaryandfuturework}
 
-\appendix
-  \include{sources/appendix}
+% \appendix
+%   \include{sources/appendix}
 
 % This ensures that the subsequent sections are being included as root
 % items in the bookmark structure of your PDF reader.

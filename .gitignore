@@ -26,7 +26,8 @@
 *.synctex.gz
 *.toc
 *.xdv
-
+benchmark_logs/
+params.yml.tour_backup
 *.run.xml
 *-blx.bib
 

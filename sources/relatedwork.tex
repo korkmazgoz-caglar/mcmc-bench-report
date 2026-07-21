@@ -1,39 +1,162 @@
 \chapter{Background and Related Work}
 \label{ch:relatedwork}
 
-Short chapter opening: what this chapter covers and in which order (inverse problem, Bayesian formulation, sampling, pipeline), one paragraph, written last.
-
-% Present the state of the art relevant to your research questions. This chapter should give the reader enough background to understand your contribution and demonstrate that you are aware of what has already been done.\footnote{If the related work spans multiple distinct domains, organise it into sections — one per domain. This makes the chapter easier to navigate.}
-
-% When citing, integrate author names naturally into your sentences when presenting their work, rather than appending citations as afterthoughts. For example: ``Smith et al.\ showed that \ldots~[1]''.
-
-% To find relevant publications, use academic search engines and domain-specific libraries.\footnote{%
-%   General: Google Scholar, Scopus, Web of Science, Semantic Scholar.
-%   Computer science: ACM Digital Library, IEEE Xplore, arXiv (preprints).
-%   Engineering \& sciences: ScienceDirect (Elsevier), SpringerLink, ASME Digital Collection, ASCE Library, PLOS.
-%   Natural sciences: PubMed, Web of Science.
-%   Open-source software: Journal of Open Source Software (JOSS), Journal of Open Research Software (JORS).
-%   Prefer peer-reviewed conference and journal papers over web sources. Use footnotes for web links and \texttt{\textbackslash cite} for articles, books, and papers.}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The Inverse Problem}
 \label{sec:inverse-problem}
 
-What it is, why it is important, when do we encounter it, and what are the main challenges. From measurements to parameters (noise, ill-posedness, non-uniqueness, etc.). What can be done? (I will not answer the question here.)
+Computational models take a set of inputs and produce quantities that can be observed; this defines the forward model. An inverse problem begins with observations and seeks to infer parameter values that are consistent with those observations under the model. In model calibration, this inference is performed by comparing simulator outputs with observed data. However, the inverse relationship need not be unique: multiple parameter combinations may explain the observations similarly, particularly in the presence of measurement uncertainty and discrepancies between the simulator and reality \autocite{Kennedy2001,Arendt2012}.
+Figure~\ref{fig:forward-inverse-problem} illustrates the relationship between these two problems.
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]
+        {images/forward_inverse_problem.pdf}
+    \caption[Relationship between the forward and inverse problems.]
+    {Relationship between the forward and inverse problems. The forward model maps parameters $\symbf{\theta}$ to predicted observables, whereas the inverse problem uses observations $\symbf{y}$ to infer plausible parameter values. Adapted from the conceptual illustration by \textcite{MouraNeto2013}.}
+    \label{fig:forward-inverse-problem}
+\end{figure}
 
+In inverse-problem theory, a problem is called ill-posed if a solution does not exist, is not unique, or changes strongly under small changes in the data \autocite[Chap.~3]{MouraNeto2013}. Calibration problems often problematic under the last two issues: because of measurement noise, limited data, and model error, several different parameter combinations can fit the observations equally. Two common solutions are regularization and probabilistic methods, which add extra information about the unknown parameters \autocite{Stuart2010,BenningBurger2018}. This study follows the probabilistic route. In gravity-driven mass flow modeling, the Bayesian calibration is often used, which estimates effective friction parameters from observed events and also quantifies the remaining uncertainty \autocite{Heredia2020,ZhaoKowalski2022}.
+ 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The Bayesian Approach to the Inverse Problem}
 \label{sec:bayesian-approach}
 
-From Bayes' theorem to prior, likelihood, and posterior (the details will be given in the chapter 3-Mathematical Formulations/Framework).
+Bayesian calibration treats the unknown model parameters as uncertain quantities and uses Bayes' theorem to update prior information with observed data \autocite{Kennedy2001,Zyphur2015}. Let $\theta$ denote the model parameters and $y$ the observations. The prior distribution $p(\theta)$ represents information about the parameters before considering $y$, while the likelihood $p(y \mid \theta)$ describes how compatible the observations are with a given parameter value. Bayes' theorem combines these components into the posterior distribution:
+
+\begin{equation}
+    p(\theta \mid y)
+    =
+    \frac{p(y \mid \theta)\,p(\theta)}{p(y)},
+    \label{eq:bayes-theorem}
+\end{equation}
+
+where $p(y)$ is the model evidence, which does not depend on $\theta$ and normalizes the posterior distribution.
+
+The evidence can be written as $p(y)=\int p(y\mid\theta)p(\theta)\,\mathrm{d}\theta$, but this integral is generally not available to us. Because $p(y)$ is constant with respect to $\theta$, many MCMC methods can explore the posterior using only its unnormalized density \autocite{Kennedy2001,Albert2025}:
+
+\begin{equation}
+    p(\theta \mid y)
+    \propto
+    p(y \mid \theta)\,p(\theta).
+    \label{eq:unnormalized-posterior}
+\end{equation}
+
+In computation, the unnormalized posterior is commonly evaluated on the logarithmic scale. This converts the product into a sum and reduces numerical errors (in floats) when the probability densities are very small:
+
+\begin{equation}
+    \log \widetilde{p}(\theta \mid y)
+    =
+    \log p(y \mid \theta)
+    +
+    \log p(\theta),
+    \label{eq:log-posterior}
+\end{equation}
+
+where $\widetilde{p}(\theta \mid y)$ denotes the unnormalized posterior density. Nested sampling differs from standard MCMC in this respect: it keeps the likelihood and prior separate in addition to the prior probability mass calculations and as a result estimates the model evidence, or in short terms, it naturally has the $\mathrm{d}\theta$ term.
+
+% Likelihood
+The likelihood connects the observations to the output of the forward model. The calibration framework uses an additive Gaussian residual model:
+
+\begin{equation}
+    y_i
+    =
+    f_i(\theta)
+    +
+    \varepsilon_i,
+    \qquad
+    \varepsilon_i
+    \overset{\mathrm{iid}}{\sim}
+    \mathcal{N}(0,\sigma^2),
+    \label{eq:additive-error-model}
+\end{equation}
+
+where $f_i(\theta)$ denotes the model prediction corresponding to observation $y_i$, and $\sigma$ is the residual standard deviation. Under this assumption, the log-likelihood for $n$ observations is
+
+\begin{equation}
+    \log p(y \mid \theta,\sigma)
+    =
+    -\frac{n}{2}\log(2\pi\sigma^2)
+    -
+    \frac{1}{2\sigma^2}
+    \sum_{i=1}^{n}
+    \left(y_i-f_i(\theta)\right)^2.
+    \label{eq:gaussian-log-likelihood}
+\end{equation}
+
+For the general formulation, $f_i(\theta)$ denotes the full forward-model response. In the benchmark implementation, it is replaced by the surrogate prediction $\widehat{f}_i(\theta)$.
+
+The residual term may combine the model error and measurement error. Consequently, independent Gaussian residuals are a modeling assumption rather than a property guaranteed by the observations \autocite{Kennedy2001,Brynjarsdottir2014,Heredia2020}.
+
+In Bayesian calibration based on a full computational model, each likelihood evaluation generally requires a new forward simulation. If this simulation is expensive, a surrogate model can approximate the input--output relationship of the original forward model using a limited set of precomputed runs \autocite{Gu2024,Yildiz2023}. This substitution substantially reduces the cost of repeated model evaluations, but introduces an additional approximation layer: the surrogate requires an initial training data set and may differ from the full-model response. Its accuracy and uncertainty must therefore be considered when interpreting the resulting posterior \autocite{Gu2024,Yildiz2023,ZhaoKowalski2022}.
+
+In the present benchmark, the likelihood is evaluated using an already constructed RobustGaSP surrogate rather than the full gravity-driven mass flow simulator. All samplers therefore target the posterior defined by the same surrogate, prior, likelihood, and observations. Although a surrogate evaluation is considerably cheaper than a full simulation, it is still performed repeatedly, and different sampling methods can require different numbers of evaluations and introduce different computational overheads. Runtime and resource use remain relevant comparison criteria, with greater computational demand also results in greater energy use \autocite{Lannelongue2021}.
+
+\section{The Bayesian Calibration Pipeline}
+\label{sec:bayesian-calibration-pipeline}
+
+A Bayesian calibration pipeline connects the statistical components of the inverse problem in a defined sequence. The unknown parameters are assigned prior distributions, the forward model or its surrogate maps these parameters to predicted observables, and the likelihood compares these predictions with the calibration data. The prior and likelihood then define the posterior distribution, which a sampling algorithm explores to produce posterior samples \autocite{Kennedy2001,Gu2024}. Keeping these components separate is important: changing the surrogate, prior, likelihood, or observations changes the target posterior, whereas changing the sampler changes the numerical strategy used to approximate that target.
+
+Figure~\ref{fig:general-calibration-workflow} provides a broader view of this process, including the construction of a surrogate from full-model simulations and the calibration and diagnostic stages. The present benchmark starts from an already trained surrogate and focuses on posterior sampling and sampler diagnostics.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/diagram.png}
+
+    \caption[General workflow of Bayesian calibration.]
+    {General workflow of Bayesian calibration. Illustration courtesy of Alan Correa.}
+
+    \label{fig:general-calibration-workflow}
+\end{figure}
+
+The \texttt{mcmc-bench} framework implements this conceptual pipeline by separating model evaluation from sampler execution. The pre-trained, R-based RobustGaSP surrogate is used through UM-Bridge, so sampler implementations interact with it through a common, language-agnostic interface rather than depending directly on the surrogate's internal implementation \autocite{Gu2024,Yildiz2023,Seelinger2023}. Nextflow coordinates the sampler-specific software environments, and subsequent diagnostic and reporting steps as a reproducible computational workflow \autocite{DiTommaso2017}. The currently integrated samplers use Python packages, but UM-Bridge allows future sampler implementations written in other programming languages to use the same model interface.
 
 \section{Sampling Methods for Bayesian Inference}
 \label{sec:sampling-methods}
 
-Need for sampling, different samplers we implemented, each of them explained in short, their advantages and disadvantages, and the state of the art in the literature (their papers).
+Modern Bayesian computation includes gradient-based methods such as HMC and NUTS, ensemble and slice-based approaches, population methods such as Sequential Monte Carlo, nested-sampling algorithms, and more recent methods that use normalizing flows to construct proposals or transform the sampling space. Representative implementations  use several programming languages and software packages, as summarized in Table~\ref{tab:samplers}.
 
-\section{The Benchmarking Pipeline}
-\label{sec:benchmarking-pipeline}
+\begin{table}[htbp]
+\centering
+\caption{Selected state-of-the-art sampling algorithms.}
+\label{tab:samplers}
+\begin{tabular}{@{}
+  >{\raggedright\arraybackslash}p{0.24\textwidth}
+  >{\raggedright\arraybackslash}p{0.16\textwidth}
+  >{\raggedright\arraybackslash}p{0.10\textwidth}
+  >{\raggedright\arraybackslash}p{0.40\textwidth}@{}}
+\toprule
+\multicolumn{1}{c}{Algorithm} & \multicolumn{1}{c}{Package(s)} & \multicolumn{1}{c}{Language(s)} & \multicolumn{1}{c}{Benefit(s)} \\
+\midrule
+HMC/NUTS \autocite{Duane1987,Hoffman2014}
+    & PyMC \autocite{PyMCNUTS2026} & Python
+    & Gradient-informed exploration \\
+Affine-invariant ensemble \autocite{Goodman2010,ForemanMackey2013}
+    & emcee & Python
+    & Robustness to linear rescaling and correlation \\
+Slice sampling \autocite{Neal2003}
+    & PyMC \autocite{PyMCSlice2026} & Python
+    & Adaptive interval construction \\
+SMC \autocite{DelMoral2006}
+    & PyMC \autocite{PyMCSMC2026} & Python
+    & Population-based exploration \\
+Nested sampling \autocite{Skilling2006,Speagle2020,Buchner2021}
+    & dynesty, UltraNest & Python
+    & Posterior and evidence estimation \\
+Flow-based nested sampling \autocite{Williams2021}
+    & nessai & Python
+    & Learned constrained-prior proposals \\
+Flow-enhanced MCMC \autocite{Wong2023}
+    & flowMC & Python
+    & Learned global proposals for complex posteriors \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-Short description of the benchmarking pipeline, its components, and how it is used to compare the samplers.\\
-Real simulations are expensive > need for surrogate models (RobustGaSP) > sampler and model connection (on UM-Bridge) > Nextflow. Here I can give a scheme.
+Given the time constraints of the present work, the initial benchmark integrations focus on Python-based packages. This is an implementation-scope decision rather than a limitation of the underlying framework. The \texttt{mcmc-bench} benchmarking framework uses a Nextflow workflow to orchestrate sampler-specific environments, while UM-Bridge decouples the model interface from the sampler implementation. The framework can therefore be extended with sampler packages implemented in other languages without changing the surrogate-model interface \autocite{Seelinger2023,DiTommaso2017}. At present, however, the surrogate implementation provides model evaluations but not gradient information, so the current benchmark directly supports only gradient-free samplers.
+
+Even though not all the samplers require gradient information or not, there is one thing in common. Calibration problems generally require numerical sampling because posterior expectations and credible intervals are not available analytically. Sampling methods differ in how they explore the target distribution: some construct local Markov-chain proposals, some use multiple interacting chains, and others visit nested likelihood regions. Their performance can therefore vary with posterior geometry, dimensionality, tuning choices, and implementation details \autocite[Sections~1--2 and~4.1]{Albert2025}. The present benchmark considers five implementations representing several of these approaches: Random-Walk Metropolis-Hastings (RWMH), emcee, dynesty, PyMC Slice, and PyMC Sequential Monte Carlo (SMC).
+
+The selected methods represent different strategies for exploring the posterior. RWMH uses local random-walk proposals followed by an accept/reject decision \autocite{Hastings1970}, while emcee employs interacting walkers and affine-invariant moves to reduce sensitivity to linear correlations \autocite{Goodman2010,ForemanMackey2013}. Slice sampling constructs a region around the current state and repeats the process for each subsequently selected value \autocite{Neal2003}. Sequential Monte Carlo evolves and resamples a population of weighted particles through a sequence of intermediate distributions \autocite{DelMoral2006}, whereas nested sampling successively explores constrained likelihood regions and additionally estimates the model evidence \autocite{Skilling2006,Speagle2020}. These methodological differences lead to different tuning requirements and computational costs \autocite{Albert2025}.
+
+This chapter provides only the conceptual background required for the comparison. The implementation, configuration, and integration of each sampler into the common benchmarking framework are described in Chapter~\ref{ch:ownwork}.
