@@ -40,3 +40,8 @@ params.yml.tour_backup
 Figures/External/
 
 .vscode/settings.json
+
+# Keep archived benchmark outputs, including execution logs.
+!results/
+!results/**/
+!results/**/*

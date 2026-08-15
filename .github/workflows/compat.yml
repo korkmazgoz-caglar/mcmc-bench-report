@@ -30,7 +30,7 @@ jobs:
           cache-environment: true
 
       - name: Build thesis
-        run: micromamba run -n thesis tectonic -X compile thesis.tex
+        run: micromamba run -n thesis tectonic -X compile mcmc-bench-report.tex
 
   tinytex:
     runs-on: ${{ matrix.os }}

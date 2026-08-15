@@ -1,0 +1,71 @@
+---
+model:
+  name: IA_voellmy
+  file: surrogate_voellmy.pkl
+  input_dim:
+  - 2
+  output_dim:
+  - 1
+  debug: false
+  max_workers: 1
+calibration:
+  sampler: pymc_slice
+  sampler_params:
+    rwmcmc:
+      step_size:
+      - 0.15
+      - 1200
+      nwalkers: 4
+    emcee:
+      nwalkers: 8
+      pool_type: serial
+      n_workers: 1
+    dynesty:
+      nlive: 3000
+      dlogz: 0.1
+      nprocs: 1
+    pymc_slice:
+      chains: 4
+      cores: 1
+      tune: 1000
+      draws: 4000
+      random_seed: 42
+    pymc_smc:
+      draws: 2000
+      chains: 4
+      cores: 1
+      threshold: 0.5
+      correlation_threshold: 0.01
+      random_seed: 42
+  nburn: 1000
+  nsteps: 5000
+  parameters:
+  - mu
+  - xi
+  noise_parameters:
+  - sigma
+  calibrate_noise: false
+  noise_sigma: 0.05
+  data:
+  - ImpactArea
+  likelihood: normal
+  priors:
+  - name: mu
+    distribution:
+      type: uniform
+      attribute:
+        lower_bound: 0.02
+        upper_bound: 0.5
+  - name: xi
+    distribution:
+      type: uniform
+      attribute:
+        lower_bound: 400.0
+        upper_bound: 4000.0
+  - name: sigma
+    distribution:
+      type: uniform
+      attribute:
+        lower_bound: 1.0E-9
+        upper_bound: 0.5
+

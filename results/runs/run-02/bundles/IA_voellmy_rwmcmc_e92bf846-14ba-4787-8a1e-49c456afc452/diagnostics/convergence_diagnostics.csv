@@ -1,0 +1,3 @@
+parameter,mean,sd,ess_bulk,ess_tail,r_hat,ess_kish,ess_per_call,ess_per_second,converged
+mu,0.183783,0.0823693,1668.49,1890.27,1.00207,,0.139529,63.0029,PASS
+xi,2326.97,960.651,1235.44,1508.35,1.00267,,0.103315,46.6509,PASS

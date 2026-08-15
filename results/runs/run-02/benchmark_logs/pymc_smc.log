@@ -1,0 +1,108 @@
+[33mNextflow 26.04.6 is available - Please consider updating your version to it(B[m
+
+ N E X T F L O W   ~  version 25.10.4
+
+Launching `main.nf` [awesome_murdock] DSL2 - revision: 3e1794719d
+
+[-        ] bpc_massflowIA:COLLECT_INPUTS            -
+[-        ] bpc_massflowIA:SETUP_UM_IPC              -
+[-        ] bpc_massflowIA:SERVE_MODEL               -
+[-        ] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SMC -
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS           -
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS            -
+[-        ] bpc_massflowIA:GENERATE_REPORT           -
+Sampler (default: emcee): pymc_smc
+
+executor >  local (2)
+[28/ebf94b] bpc_massflowIA:COLLECT_INPUTS            | 0 of 1
+[ac/0beaee] bpc_massflowIA:SETUP_UM_IPC              | 0 of 1
+[-        ] bpc_massflowIA:SERVE_MODEL               -
+[-        ] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SMC -
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS           -
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS            -
+[-        ] bpc_massflowIA:GENERATE_REPORT           -
+Sampler (default: emcee): pymc_smc
+
+executor >  local (3)
+[28/ebf94b] bpc_massflowIA:COLLECT_INPUTS            | 1 of 1 ✔
+[ac/0beaee] bpc_massflowIA:SETUP_UM_IPC              | 1 of 1 ✔
+[23/3095d1] bpc_massflowIA:SERVE_MODEL               | 0 of 1
+[-        ] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SMC -
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS           -
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS            -
+[-        ] bpc_massflowIA:GENERATE_REPORT           -
+Sampler (default: emcee): pymc_smc
+Creating env using conda: /tmp/mcmc-bench-three-runs.PU0OPPyX/source/mcmc/pymc_smc/environment.yml [cache /home/korkmazgoz/projects/mcmc-bench-test/nextflow-conda-cache/env-039f63739eece82dfe7dd8c197ffb868]
+
+executor >  local (4)
+[28/ebf94b] bpc_massflowIA:COLLECT_INPUTS            | 1 of 1 ✔
+[ac/0beaee] bpc_massflowIA:SETUP_UM_IPC              | 1 of 1 ✔
+[23/3095d1] bpc_massflowIA:SERVE_MODEL               | 0 of 1
+[dc/9f7c82] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SMC | 0 of 1
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS           -
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS            -
+[-        ] bpc_massflowIA:GENERATE_REPORT           -
+
+
+
+executor >  local (4)
+[28/ebf94b] bpc_massflowIA:COLLECT_INPUTS            | 1 of 1 ✔
+[ac/0beaee] bpc_massflowIA:SETUP_UM_IPC              | 1 of 1 ✔
+[23/3095d1] bpc_massflowIA:SERVE_MODEL               | 0 of 1
+[dc/9f7c82] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SMC | 0 of 1
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS           -
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS            -
+[-        ] bpc_massflowIA:GENERATE_REPORT           -
+
+
+
+executor >  local (5)
+[28/ebf94b] bpc_massflowIA:COLLECT_INPUTS            | 1 of 1 ✔
+[ac/0beaee] bpc_massflowIA:SETUP_UM_IPC              | 1 of 1 ✔
+[23/3095d1] bpc_massflowIA:SERVE_MODEL               | 0 of 1
+[dc/9f7c82] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SMC | 1 of 1 ✔
+[ea/1cd4ec] bpc_massflowIA:RUN_DIAGNOSTICS           | 0 of 1
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS            -
+[-        ] bpc_massflowIA:GENERATE_REPORT           -
+
+executor >  local (5)
+[28/ebf94b] bpc_massflowIA:COLLECT_INPUTS            | 1 of 1 ✔
+[ac/0beaee] bpc_massflowIA:SETUP_UM_IPC              | 1 of 1 ✔
+[23/3095d1] bpc_massflowIA:SERVE_MODEL               | 1 of 1 ✔
+[dc/9f7c82] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SMC | 1 of 1 ✔
+[ea/1cd4ec] bpc_massflowIA:RUN_DIAGNOSTICS           | 0 of 1
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS            -
+[-        ] bpc_massflowIA:GENERATE_REPORT           -
+
+executor >  local (5)
+[28/ebf94b] bpc_massflowIA:COLLECT_INPUTS            | 1 of 1 ✔
+[ac/0beaee] bpc_massflowIA:SETUP_UM_IPC              | 1 of 1 ✔
+[23/3095d1] bpc_massflowIA:SERVE_MODEL               | 1 of 1 ✔
+[dc/9f7c82] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SMC | 1 of 1 ✔
+[ea/1cd4ec] bpc_massflowIA:RUN_DIAGNOSTICS           | 1 of 1 ✔
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS            -
+[-        ] bpc_massflowIA:GENERATE_REPORT           -
+
+executor >  local (7)
+[28/ebf94b] bpc_massflowIA:COLLECT_INPUTS            | 1 of 1 ✔
+[ac/0beaee] bpc_massflowIA:SETUP_UM_IPC              | 1 of 1 ✔
+[23/3095d1] bpc_massflowIA:SERVE_MODEL               | 1 of 1 ✔
+[dc/9f7c82] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SMC | 1 of 1 ✔
+[ea/1cd4ec] bpc_massflowIA:RUN_DIAGNOSTICS           | 1 of 1 ✔
+[ba/3b3af1] bpc_massflowIA:BUNDLE_OUTPUTS            | 1 of 1 ✔
+[3b/43dd28] bpc_massflowIA:GENERATE_REPORT           | 0 of 1
+
+executor >  local (7)
+[28/ebf94b] bpc_massflowIA:COLLECT_INPUTS            | 1 of 1 ✔
+[ac/0beaee] bpc_massflowIA:SETUP_UM_IPC              | 1 of 1 ✔
+[23/3095d1] bpc_massflowIA:SERVE_MODEL               | 1 of 1 ✔
+[dc/9f7c82] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SMC | 1 of 1 ✔
+[ea/1cd4ec] bpc_massflowIA:RUN_DIAGNOSTICS           | 1 of 1 ✔
+[ba/3b3af1] bpc_massflowIA:BUNDLE_OUTPUTS            | 1 of 1 ✔
+[3b/43dd28] bpc_massflowIA:GENERATE_REPORT           | 1 of 1 ✔
+Completed at: 13-Aug-2026 18:24:11
+Duration    : 3m 24s
+CPU hours   : 0.1
+Succeeded   : 7
+
+

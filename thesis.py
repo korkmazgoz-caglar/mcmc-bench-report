@@ -7,7 +7,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-THESIS = "thesis.tex"
+THESIS = "mcmc-bench-report.tex"
 PACKAGES_FILE = Path(__file__).parent / "tex-packages.txt"
 
 

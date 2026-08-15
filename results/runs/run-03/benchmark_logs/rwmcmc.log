@@ -1,0 +1,105 @@
+[33mNextflow 26.04.6 is available - Please consider updating your version to it(B[m
+
+ N E X T F L O W   ~  version 25.10.4
+
+Launching `main.nf` [prickly_meucci] DSL2 - revision: 3e1794719d
+
+[-        ] bpc_massflowIA:COLLECT_INPUTS          -
+[-        ] bpc_massflowIA:SETUP_UM_IPC            -
+[-        ] bpc_massflowIA:SERVE_MODEL             -
+[-        ] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC -
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS         -
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS          -
+[-        ] bpc_massflowIA:GENERATE_REPORT         -
+Sampler (default: emcee): rwmcmc
+
+executor >  local (4)
+[23/b6a904] bpc_massflowIA:COLLECT_INPUTS          | 1 of 1 ✔
+[36/d9a3bc] bpc_massflowIA:SETUP_UM_IPC            | 1 of 1 ✔
+[2c/86656c] bpc_massflowIA:SERVE_MODEL             | 0 of 1
+[56/86e76a] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC | 0 of 1
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS         -
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS          -
+[-        ] bpc_massflowIA:GENERATE_REPORT         -
+Sampler (default: emcee): rwmcmc
+
+executor >  local (4)
+[23/b6a904] bpc_massflowIA:COLLECT_INPUTS          | 1 of 1 ✔
+[36/d9a3bc] bpc_massflowIA:SETUP_UM_IPC            | 1 of 1 ✔
+[2c/86656c] bpc_massflowIA:SERVE_MODEL             | 0 of 1
+[56/86e76a] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC | 0 of 1
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS         -
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS          -
+[-        ] bpc_massflowIA:GENERATE_REPORT         -
+Sampler (default: emcee): rwmcmc
+
+executor >  local (5)
+[23/b6a904] bpc_massflowIA:COLLECT_INPUTS          | 1 of 1 ✔
+[36/d9a3bc] bpc_massflowIA:SETUP_UM_IPC            | 1 of 1 ✔
+[2c/86656c] bpc_massflowIA:SERVE_MODEL             | 0 of 1
+[56/86e76a] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC | 1 of 1 ✔
+[ee/7b6ce1] bpc_massflowIA:RUN_DIAGNOSTICS         | 0 of 1
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS          -
+[-        ] bpc_massflowIA:GENERATE_REPORT         -
+Sampler (default: emcee): rwmcmc
+
+executor >  local (5)
+[23/b6a904] bpc_massflowIA:COLLECT_INPUTS          | 1 of 1 ✔
+[36/d9a3bc] bpc_massflowIA:SETUP_UM_IPC            | 1 of 1 ✔
+[2c/86656c] bpc_massflowIA:SERVE_MODEL             | 0 of 1
+[56/86e76a] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC | 1 of 1 ✔
+[ee/7b6ce1] bpc_massflowIA:RUN_DIAGNOSTICS         | 0 of 1
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS          -
+[-        ] bpc_massflowIA:GENERATE_REPORT         -
+Sampler (default: emcee): rwmcmc
+
+executor >  local (5)
+[23/b6a904] bpc_massflowIA:COLLECT_INPUTS          | 1 of 1 ✔
+[36/d9a3bc] bpc_massflowIA:SETUP_UM_IPC            | 1 of 1 ✔
+[2c/86656c] bpc_massflowIA:SERVE_MODEL             | 1 of 1 ✔
+[56/86e76a] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC | 1 of 1 ✔
+[ee/7b6ce1] bpc_massflowIA:RUN_DIAGNOSTICS         | 0 of 1
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS          -
+[-        ] bpc_massflowIA:GENERATE_REPORT         -
+Sampler (default: emcee): rwmcmc
+
+executor >  local (6)
+[23/b6a904] bpc_massflowIA:COLLECT_INPUTS          | 1 of 1 ✔
+[36/d9a3bc] bpc_massflowIA:SETUP_UM_IPC            | 1 of 1 ✔
+[2c/86656c] bpc_massflowIA:SERVE_MODEL             | 1 of 1 ✔
+[56/86e76a] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC | 1 of 1 ✔
+[ee/7b6ce1] bpc_massflowIA:RUN_DIAGNOSTICS         | 1 of 1 ✔
+[8a/969fd9] bpc_massflowIA:BUNDLE_OUTPUTS          | 1 of 1 ✔
+[-        ] bpc_massflowIA:GENERATE_REPORT         | 0 of 1
+Sampler (default: emcee): rwmcmc
+
+executor >  local (7)
+[23/b6a904] bpc_massflowIA:COLLECT_INPUTS          | 1 of 1 ✔
+[36/d9a3bc] bpc_massflowIA:SETUP_UM_IPC            | 1 of 1 ✔
+[2c/86656c] bpc_massflowIA:SERVE_MODEL             | 1 of 1 ✔
+[56/86e76a] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC | 1 of 1 ✔
+[ee/7b6ce1] bpc_massflowIA:RUN_DIAGNOSTICS         | 1 of 1 ✔
+[8a/969fd9] bpc_massflowIA:BUNDLE_OUTPUTS          | 1 of 1 ✔
+[32/e7dfda] bpc_massflowIA:GENERATE_REPORT         | 0 of 1
+Sampler (default: emcee): rwmcmc
+
+executor >  local (7)
+[23/b6a904] bpc_massflowIA:COLLECT_INPUTS          | 1 of 1 ✔
+[36/d9a3bc] bpc_massflowIA:SETUP_UM_IPC            | 1 of 1 ✔
+[2c/86656c] bpc_massflowIA:SERVE_MODEL             | 1 of 1 ✔
+[56/86e76a] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC | 1 of 1 ✔
+[ee/7b6ce1] bpc_massflowIA:RUN_DIAGNOSTICS         | 1 of 1 ✔
+[8a/969fd9] bpc_massflowIA:BUNDLE_OUTPUTS          | 1 of 1 ✔
+[32/e7dfda] bpc_massflowIA:GENERATE_REPORT         | 1 of 1 ✔
+
+
+executor >  local (7)
+[23/b6a904] bpc_massflowIA:COLLECT_INPUTS          | 1 of 1 ✔
+[36/d9a3bc] bpc_massflowIA:SETUP_UM_IPC            | 1 of 1 ✔
+[2c/86656c] bpc_massflowIA:SERVE_MODEL             | 1 of 1 ✔
+[56/86e76a] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC | 1 of 1 ✔
+[ee/7b6ce1] bpc_massflowIA:RUN_DIAGNOSTICS         | 1 of 1 ✔
+[8a/969fd9] bpc_massflowIA:BUNDLE_OUTPUTS          | 1 of 1 ✔
+[32/e7dfda] bpc_massflowIA:GENERATE_REPORT         | 1 of 1 ✔
+
+

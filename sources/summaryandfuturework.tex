@@ -1,14 +1,18 @@
 \chapter{Summary and Future Work}
 \label{ch:summary}
 
-This report developed and evaluated \texttt{mcmc-bench}, a common framework for comparing sampling methods in Bayesian calibration. Five gradient-free samplers were integrated through a shared Nextflow workflow and UM-Bridge model interface.
+This report presents \texttt{mcmc-bench}, a common, extensible framework for comparing sampling methods in Bayesian calibration problems. Five gradient-free sampler implementations were integrated and compared through a Nextflow workflow and a UM-Bridge interface to the RobustGaSP surrogate model.
 
 \section{Summary}
 \label{sec:summary}
 
-Regarding RQ1, the implementation shows that sampler-specific environments can be integrated while keeping the surrogate model, statistical problem, and output format fixed. Regarding RQ2, posterior summaries, convergence diagnostics, model evaluations, and sampling time provide a practical comparison of the methods. The samplers produced similar posterior estimates in the mass-flow case study, while dynesty was the most computationally efficient in the single benchmark run.
+The implementation in this study shows that sampler-specific environments can be integrated while the surrogate model, statistical problem, and output format are kept the same for Bayesian problem solving, which answers RQ1. For RQ2, it was assessed that measuring posterior accuracy requires an independent reference, which was not available for this study. Posterior agreement, convergence diagnostics, and efficiency still provide a practical comparison, provided that the diagnostics are interpreted per method. Chain-based statistics support a formal convergence decision only for RWMH and PyMC Slice, while the remaining samplers require their own termination and/or agreement arguments.
+
+In this study, all of the samplers produced similar posterior means and standard deviations across three executions. The comparison did not identify a single best-performing sampler because the results depended on the selected efficiency metrics and ESS-based metrics are not fully equivalent for all samplers examined.
 
 \section{Future Work}
 \label{sec:future-work}
 
-The evaluation should be repeated with multiple runs, more thoroughly tuned settings, higher-dimensional calibration problems, and alternative models. Extending the model interface with gradient information would enable gradient-based samplers, while additional model workers and sampler implementations in other programming languages would broaden the benchmark.
+The three executions help us to see the variation in the results and reduce the dependence on a single execution; however, more than three executions are needed to obtain a more reliable assessment of the variation in the results. Also, in future evaluations, higher-dimensional calibration problems should be added along with alternative models. Moreover, a reference posterior or a validated benchmark problem can be used for a better comparison and termination decision, yielding better performance evaluations. That provides better options for sampler configuration settings and hence a fairer comparison. Also, the effects of the surrogate model uncertainty and model discrepancy should be examined.
+
+For the \texttt{mcmc-bench} framework, further improvements should include computational reproducibility and automated validation. More detailed metadata files would make it possible to recreate the outputs more reliably if other users want to compare their results with this study. An example would be an optional seed setting, which would help the executions to be repeated exactly. Other effects on the results, such as the hardware and the communication state of the server, could then be compared. Moreover, automated tests can cover the likelihood calculation, sampler configurations, and output formats and they should run automatically when changes are pushed to the repository with Continuous Integration (CI).

@@ -1,0 +1,127 @@
+[33mNextflow 26.04.6 is available - Please consider updating your version to it(B[m
+
+ N E X T F L O W   ~  version 25.10.4
+
+Launching `main.nf` [magical_yalow] DSL2 - revision: 3e1794719d
+
+[-        ] bpc_massflowIA:COLLECT_INPUTS              -
+[-        ] bpc_massflowIA:SETUP_UM_IPC                -
+[-        ] bpc_massflowIA:SERVE_MODEL                 -
+[-        ] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SLICE -
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS             -
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS              -
+[-        ] bpc_massflowIA:GENERATE_REPORT             -
+Sampler (default: emcee): pymc_slice
+
+executor >  local (2)
+[43/88a105] bpc_massflowIA:COLLECT_INPUTS              | 1 of 1 ✔
+[b6/bf6803] bpc_massflowIA:SETUP_UM_IPC                | 1 of 1 ✔
+[-        ] bpc_massflowIA:SERVE_MODEL                 -
+[-        ] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SLICE -
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS             -
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS              -
+[-        ] bpc_massflowIA:GENERATE_REPORT             -
+Sampler (default: emcee): pymc_slice
+Creating env using conda: /home/korkmazgoz/projects/mcmc-bench/mcmc/pymc_slice/environment.yml [cache /home/korkmazgoz/projects/mcmc-bench/.work/conda/env-e9d396eb0c960d086e5a57893fa622d5]
+
+executor >  local (3)
+[43/88a105] bpc_massflowIA:COLLECT_INPUTS              | 1 of 1 ✔
+[b6/bf6803] bpc_massflowIA:SETUP_UM_IPC                | 1 of 1 ✔
+[22/f2df0d] bpc_massflowIA:SERVE_MODEL                 | 0 of 1
+[-        ] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SLICE -
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS             -
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS              -
+[-        ] bpc_massflowIA:GENERATE_REPORT             -
+Sampler (default: emcee): pymc_slice
+Creating env using conda: /home/korkmazgoz/projects/mcmc-bench/mcmc/pymc_slice/environment.yml [cache /home/korkmazgoz/projects/mcmc-bench/.work/conda/env-e9d396eb0c960d086e5a57893fa622d5]
+
+executor >  local (4)
+[43/88a105] bpc_massflowIA:COLLECT_INPUTS              | 1 of 1 ✔
+[b6/bf6803] bpc_massflowIA:SETUP_UM_IPC                | 1 of 1 ✔
+[22/f2df0d] bpc_massflowIA:SERVE_MODEL                 | 0 of 1
+[80/3e4e57] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SLICE | 0 of 1
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS             -
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS              -
+[-        ] bpc_massflowIA:GENERATE_REPORT             -
+
+
+
+executor >  local (4)
+[43/88a105] bpc_massflowIA:COLLECT_INPUTS              | 1 of 1 ✔
+[b6/bf6803] bpc_massflowIA:SETUP_UM_IPC                | 1 of 1 ✔
+[22/f2df0d] bpc_massflowIA:SERVE_MODEL                 | 0 of 1
+[80/3e4e57] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SLICE | 0 of 1
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS             -
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS              -
+[-        ] bpc_massflowIA:GENERATE_REPORT             -
+
+
+
+executor >  local (4)
+[43/88a105] bpc_massflowIA:COLLECT_INPUTS              | 1 of 1 ✔
+[b6/bf6803] bpc_massflowIA:SETUP_UM_IPC                | 1 of 1 ✔
+[22/f2df0d] bpc_massflowIA:SERVE_MODEL                 | 0 of 1
+[80/3e4e57] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SLICE | 1 of 1 ✔
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS             | 0 of 1
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS              -
+[-        ] bpc_massflowIA:GENERATE_REPORT             -
+
+executor >  local (5)
+[43/88a105] bpc_massflowIA:COLLECT_INPUTS              | 1 of 1 ✔
+[b6/bf6803] bpc_massflowIA:SETUP_UM_IPC                | 1 of 1 ✔
+[22/f2df0d] bpc_massflowIA:SERVE_MODEL                 | 0 of 1
+[80/3e4e57] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SLICE | 1 of 1 ✔
+[ec/92fbe6] bpc_massflowIA:RUN_DIAGNOSTICS             | 0 of 1
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS              -
+[-        ] bpc_massflowIA:GENERATE_REPORT             -
+
+executor >  local (5)
+[43/88a105] bpc_massflowIA:COLLECT_INPUTS              | 1 of 1 ✔
+[b6/bf6803] bpc_massflowIA:SETUP_UM_IPC                | 1 of 1 ✔
+[22/f2df0d] bpc_massflowIA:SERVE_MODEL                 | 1 of 1 ✔
+[80/3e4e57] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SLICE | 1 of 1 ✔
+[ec/92fbe6] bpc_massflowIA:RUN_DIAGNOSTICS             | 0 of 1
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS              -
+[-        ] bpc_massflowIA:GENERATE_REPORT             -
+
+executor >  local (6)
+[43/88a105] bpc_massflowIA:COLLECT_INPUTS              | 1 of 1 ✔
+[b6/bf6803] bpc_massflowIA:SETUP_UM_IPC                | 1 of 1 ✔
+[22/f2df0d] bpc_massflowIA:SERVE_MODEL                 | 1 of 1 ✔
+[80/3e4e57] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SLICE | 1 of 1 ✔
+[ec/92fbe6] bpc_massflowIA:RUN_DIAGNOSTICS             | 1 of 1 ✔
+[4a/43022e] bpc_massflowIA:BUNDLE_OUTPUTS              | 0 of 1
+[-        ] bpc_massflowIA:GENERATE_REPORT             -
+
+executor >  local (7)
+[43/88a105] bpc_massflowIA:COLLECT_INPUTS              | 1 of 1 ✔
+[b6/bf6803] bpc_massflowIA:SETUP_UM_IPC                | 1 of 1 ✔
+[22/f2df0d] bpc_massflowIA:SERVE_MODEL                 | 1 of 1 ✔
+[80/3e4e57] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SLICE | 1 of 1 ✔
+[ec/92fbe6] bpc_massflowIA:RUN_DIAGNOSTICS             | 1 of 1 ✔
+[4a/43022e] bpc_massflowIA:BUNDLE_OUTPUTS              | 1 of 1 ✔
+[99/47e245] bpc_massflowIA:GENERATE_REPORT             | 0 of 1
+
+executor >  local (7)
+[43/88a105] bpc_massflowIA:COLLECT_INPUTS              | 1 of 1 ✔
+[b6/bf6803] bpc_massflowIA:SETUP_UM_IPC                | 1 of 1 ✔
+[22/f2df0d] bpc_massflowIA:SERVE_MODEL                 | 1 of 1 ✔
+[80/3e4e57] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SLICE | 1 of 1 ✔
+[ec/92fbe6] bpc_massflowIA:RUN_DIAGNOSTICS             | 1 of 1 ✔
+[4a/43022e] bpc_massflowIA:BUNDLE_OUTPUTS              | 1 of 1 ✔
+[99/47e245] bpc_massflowIA:GENERATE_REPORT             | 1 of 1 ✔
+
+executor >  local (7)
+[43/88a105] bpc_massflowIA:COLLECT_INPUTS              | 1 of 1 ✔
+[b6/bf6803] bpc_massflowIA:SETUP_UM_IPC                | 1 of 1 ✔
+[22/f2df0d] bpc_massflowIA:SERVE_MODEL                 | 1 of 1 ✔
+[80/3e4e57] bpc_massflowIA:MCMC_CALIBRATION_PYMC_SLICE | 1 of 1 ✔
+[ec/92fbe6] bpc_massflowIA:RUN_DIAGNOSTICS             | 1 of 1 ✔
+[4a/43022e] bpc_massflowIA:BUNDLE_OUTPUTS              | 1 of 1 ✔
+[99/47e245] bpc_massflowIA:GENERATE_REPORT             | 1 of 1 ✔
+Completed at: 13-Aug-2026 14:31:52
+Duration    : 9m 25s
+CPU hours   : 0.3
+Succeeded   : 7
+
+

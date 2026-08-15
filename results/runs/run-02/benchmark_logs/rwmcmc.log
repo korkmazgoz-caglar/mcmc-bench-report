@@ -1,0 +1,146 @@
+[33mNextflow 26.04.6 is available - Please consider updating your version to it(B[m
+
+ N E X T F L O W   ~  version 25.10.4
+
+Launching `main.nf` [awesome_leakey] DSL2 - revision: 3e1794719d
+
+[-        ] bpc_massflowIA:COLLECT_INPUTS -
+[-        ] bpc_massflowIA:SETUP_UM_IPC   -
+[-        ] bpc_massflowIA:SERVE_MODEL    -
+Sampler (default: emcee): rwmcmc
+
+[-        ] bpc_massflowIA:COLLECT_INPUTS          | 0 of 1
+[-        ] bpc_massflowIA:SETUP_UM_IPC            | 0 of 1
+[-        ] bpc_massflowIA:SERVE_MODEL             -
+[-        ] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC -
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS         -
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS          -
+[-        ] bpc_massflowIA:GENERATE_REPORT         -
+Sampler (default: emcee): rwmcmc
+
+executor >  local (2)
+[a4/53ecc6] bpc_massflowIA:COLLECT_INPUTS          | 1 of 1 ✔
+[40/311689] bpc_massflowIA:SETUP_UM_IPC            | 1 of 1 ✔
+[-        ] bpc_massflowIA:SERVE_MODEL             -
+[-        ] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC -
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS         -
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS          -
+[-        ] bpc_massflowIA:GENERATE_REPORT         -
+Sampler (default: emcee): rwmcmc
+Creating env using conda: /tmp/mcmc-bench-three-runs.PU0OPPyX/source/model/environment.yml [cache /home/korkmazgoz/projects/mcmc-bench-test/nextflow-conda-cache/env-a1af59189e0e723ed5f2d98f4ccb22ae]
+Creating env using conda: /tmp/mcmc-bench-three-runs.PU0OPPyX/source/mcmc/rwmcmc/environment.yml [cache /home/korkmazgoz/projects/mcmc-bench-test/nextflow-conda-cache/env-f3092515149443f6834c2d399f6ef6c6]
+
+executor >  local (3)
+[a4/53ecc6] bpc_massflowIA:COLLECT_INPUTS          | 1 of 1 ✔
+[40/311689] bpc_massflowIA:SETUP_UM_IPC            | 1 of 1 ✔
+[5f/46ff42] bpc_massflowIA:SERVE_MODEL             | 0 of 1
+[-        ] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC -
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS         -
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS          -
+[-        ] bpc_massflowIA:GENERATE_REPORT         -
+Sampler (default: emcee): rwmcmc
+Creating env using conda: /tmp/mcmc-bench-three-runs.PU0OPPyX/source/model/environment.yml [cache /home/korkmazgoz/projects/mcmc-bench-test/nextflow-conda-cache/env-a1af59189e0e723ed5f2d98f4ccb22ae]
+Creating env using conda: /tmp/mcmc-bench-three-runs.PU0OPPyX/source/mcmc/rwmcmc/environment.yml [cache /home/korkmazgoz/projects/mcmc-bench-test/nextflow-conda-cache/env-f3092515149443f6834c2d399f6ef6c6]
+
+executor >  local (4)
+[a4/53ecc6] bpc_massflowIA:COLLECT_INPUTS          | 1 of 1 ✔
+[40/311689] bpc_massflowIA:SETUP_UM_IPC            | 1 of 1 ✔
+[5f/46ff42] bpc_massflowIA:SERVE_MODEL             | 0 of 1
+[7d/78f826] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC | 0 of 1
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS         -
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS          -
+[-        ] bpc_massflowIA:GENERATE_REPORT         -
+
+
+
+
+executor >  local (4)
+[a4/53ecc6] bpc_massflowIA:COLLECT_INPUTS          | 1 of 1 ✔
+[40/311689] bpc_massflowIA:SETUP_UM_IPC            | 1 of 1 ✔
+[5f/46ff42] bpc_massflowIA:SERVE_MODEL             | 0 of 1
+[7d/78f826] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC | 0 of 1
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS         -
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS          -
+[-        ] bpc_massflowIA:GENERATE_REPORT         -
+
+
+
+
+executor >  local (4)
+[a4/53ecc6] bpc_massflowIA:COLLECT_INPUTS          | 1 of 1 ✔
+[40/311689] bpc_massflowIA:SETUP_UM_IPC            | 1 of 1 ✔
+[5f/46ff42] bpc_massflowIA:SERVE_MODEL             | 0 of 1
+[7d/78f826] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC | 1 of 1 ✔
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS         -
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS          -
+[-        ] bpc_massflowIA:GENERATE_REPORT         -
+Creating env using conda: /tmp/mcmc-bench-three-runs.PU0OPPyX/source/diagnostics/environment.yml [cache /home/korkmazgoz/projects/mcmc-bench-test/nextflow-conda-cache/env-8b7290952b41670dfe338cfdf1852e0e]
+
+executor >  local (4)
+[a4/53ecc6] bpc_massflowIA:COLLECT_INPUTS          | 1 of 1 ✔
+[40/311689] bpc_massflowIA:SETUP_UM_IPC            | 1 of 1 ✔
+[5f/46ff42] bpc_massflowIA:SERVE_MODEL             | 1 of 1 ✔
+[7d/78f826] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC | 1 of 1 ✔
+[-        ] bpc_massflowIA:RUN_DIAGNOSTICS         -
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS          -
+[-        ] bpc_massflowIA:GENERATE_REPORT         -
+Creating env using conda: /tmp/mcmc-bench-three-runs.PU0OPPyX/source/diagnostics/environment.yml [cache /home/korkmazgoz/projects/mcmc-bench-test/nextflow-conda-cache/env-8b7290952b41670dfe338cfdf1852e0e]
+
+executor >  local (5)
+[a4/53ecc6] bpc_massflowIA:COLLECT_INPUTS          | 1 of 1 ✔
+[40/311689] bpc_massflowIA:SETUP_UM_IPC            | 1 of 1 ✔
+[5f/46ff42] bpc_massflowIA:SERVE_MODEL             | 1 of 1 ✔
+[7d/78f826] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC | 1 of 1 ✔
+[4c/d4f14c] bpc_massflowIA:RUN_DIAGNOSTICS         | 0 of 1
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS          -
+[-        ] bpc_massflowIA:GENERATE_REPORT         -
+Creating env using conda: /tmp/mcmc-bench-three-runs.PU0OPPyX/source/diagnostics/environment.yml [cache /home/korkmazgoz/projects/mcmc-bench-test/nextflow-conda-cache/env-8b7290952b41670dfe338cfdf1852e0e]
+
+executor >  local (5)
+[a4/53ecc6] bpc_massflowIA:COLLECT_INPUTS          | 1 of 1 ✔
+[40/311689] bpc_massflowIA:SETUP_UM_IPC            | 1 of 1 ✔
+[5f/46ff42] bpc_massflowIA:SERVE_MODEL             | 1 of 1 ✔
+[7d/78f826] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC | 1 of 1 ✔
+[4c/d4f14c] bpc_massflowIA:RUN_DIAGNOSTICS         | 0 of 1
+[-        ] bpc_massflowIA:BUNDLE_OUTPUTS          -
+[-        ] bpc_massflowIA:GENERATE_REPORT         -
+Creating env using conda: /tmp/mcmc-bench-three-runs.PU0OPPyX/source/diagnostics/environment.yml [cache /home/korkmazgoz/projects/mcmc-bench-test/nextflow-conda-cache/env-8b7290952b41670dfe338cfdf1852e0e]
+
+executor >  local (6)
+[a4/53ecc6] bpc_massflowIA:COLLECT_INPUTS          | 1 of 1 ✔
+[40/311689] bpc_massflowIA:SETUP_UM_IPC            | 1 of 1 ✔
+[5f/46ff42] bpc_massflowIA:SERVE_MODEL             | 1 of 1 ✔
+[7d/78f826] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC | 1 of 1 ✔
+[4c/d4f14c] bpc_massflowIA:RUN_DIAGNOSTICS         | 1 of 1 ✔
+[81/be8237] bpc_massflowIA:BUNDLE_OUTPUTS          | 1 of 1 ✔
+[-        ] bpc_massflowIA:GENERATE_REPORT         -
+Creating env using conda: /tmp/mcmc-bench-three-runs.PU0OPPyX/source/diagnostics/environment.yml [cache /home/korkmazgoz/projects/mcmc-bench-test/nextflow-conda-cache/env-8b7290952b41670dfe338cfdf1852e0e]
+Creating env using conda: /tmp/mcmc-bench-three-runs.PU0OPPyX/source/report/environment.yml [cache /home/korkmazgoz/projects/mcmc-bench-test/nextflow-conda-cache/env-8be95219dafab911c1ed6d2c16b67a66]
+
+executor >  local (7)
+[a4/53ecc6] bpc_massflowIA:COLLECT_INPUTS          | 1 of 1 ✔
+[40/311689] bpc_massflowIA:SETUP_UM_IPC            | 1 of 1 ✔
+[5f/46ff42] bpc_massflowIA:SERVE_MODEL             | 1 of 1 ✔
+[7d/78f826] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC | 1 of 1 ✔
+[4c/d4f14c] bpc_massflowIA:RUN_DIAGNOSTICS         | 1 of 1 ✔
+[81/be8237] bpc_massflowIA:BUNDLE_OUTPUTS          | 1 of 1 ✔
+[b6/01e8c0] bpc_massflowIA:GENERATE_REPORT         | 0 of 1
+Creating env using conda: /tmp/mcmc-bench-three-runs.PU0OPPyX/source/diagnostics/environment.yml [cache /home/korkmazgoz/projects/mcmc-bench-test/nextflow-conda-cache/env-8b7290952b41670dfe338cfdf1852e0e]
+Creating env using conda: /tmp/mcmc-bench-three-runs.PU0OPPyX/source/report/environment.yml [cache /home/korkmazgoz/projects/mcmc-bench-test/nextflow-conda-cache/env-8be95219dafab911c1ed6d2c16b67a66]
+
+executor >  local (7)
+[a4/53ecc6] bpc_massflowIA:COLLECT_INPUTS          | 1 of 1 ✔
+[40/311689] bpc_massflowIA:SETUP_UM_IPC            | 1 of 1 ✔
+[5f/46ff42] bpc_massflowIA:SERVE_MODEL             | 1 of 1 ✔
+[7d/78f826] bpc_massflowIA:MCMC_CALIBRATION_RWMCMC | 1 of 1 ✔
+[4c/d4f14c] bpc_massflowIA:RUN_DIAGNOSTICS         | 1 of 1 ✔
+[81/be8237] bpc_massflowIA:BUNDLE_OUTPUTS          | 1 of 1 ✔
+[b6/01e8c0] bpc_massflowIA:GENERATE_REPORT         | 1 of 1 ✔
+Creating env using conda: /tmp/mcmc-bench-three-runs.PU0OPPyX/source/diagnostics/environment.yml [cache /home/korkmazgoz/projects/mcmc-bench-test/nextflow-conda-cache/env-8b7290952b41670dfe338cfdf1852e0e]
+Creating env using conda: /tmp/mcmc-bench-three-runs.PU0OPPyX/source/report/environment.yml [cache /home/korkmazgoz/projects/mcmc-bench-test/nextflow-conda-cache/env-8be95219dafab911c1ed6d2c16b67a66]
+Completed at: 13-Aug-2026 18:09:47
+Duration    : 1m 59s
+CPU hours   : (a few seconds)
+Succeeded   : 7
+
+

@@ -1,14 +1,14 @@
 \chapter{Benchmarking Sampling Methods}
 \label{ch:ownwork}
 
-This chapter presents the implementation of \texttt{mcmc-bench}, a common benchmarking framework integrating Random-Walk Metropolis-Hastings, emcee, dynesty, PyMC Slice, and PyMC Sequential Monte Carlo. The framework keeps the surrogate model, observations, prior distributions, likelihood, and quantification fixed while changing the sampler integration. All methods therefore target the same posterior and produce outputs in a common format, allowing their accuracy, convergence behavior, and sampling runtime to be evaluated consistently. The shared implementation is described first, followed by the sampler-specific integration details.
+This chapter presents the implementation of \texttt{mcmc-bench}, a common benchmarking framework integrating Random-Walk Metropolis-Hastings, emcee, dynesty, PyMC Slice, and PyMC Sequential Monte Carlo. In this study, the surrogate model, observations, prior distributions, likelihood, and quantification are fixed, and only the sampler integration is changed. As a result, all samplers produce outputs in a common format so that their accuracy, convergence behavior, and sampling runtime can be compared consistently. The implementation details are presented below, followed by the integration details for each sampler.
 
 \section{Implementation Details}
 \label{sec:implementation-details}
 
-All benchmark runs are controlled through a single YAML configuration file, which defines the surrogate model, observations, calibrated parameters, prior distributions, likelihood, and sampler-specific settings. In the present benchmark, the Voellmy friction parameters $\mu$ and $\xi$ are calibrated against the observed impact area using the uniform priors $\mu \sim \mathcal{U}(0.02,0.50)$ and $\xi \sim \mathcal{U}(400,4000)$. A Gaussian likelihood with a fixed noise standard deviation of $\sigma=0.05$ is used; although optional noise calibration is supported, it is disabled for the current comparison. Changing the selected sampler therefore leaves the statistical calibration problem unchanged and modifies only the sampler and its configuration.
+The runs are executed using a single YAML configuration file in which the surrogate model, observations, calibrated parameters, prior distributions, likelihood, and sampler-specific settings are defined. In this benchmark, the Voellmy friction parameters $\mu$ and $\xi$ are calibrated against the observed impact area in ground\_truth.csv using the uniform priors $\mu \sim \mathcal{U}(0.02,0.50)$ and $\xi \sim \mathcal{U}(400,4000)$. For the likelihood calculations, the residual is assumed to follow a Gaussian distribution with mean zero and a fixed standard deviation of $\sigma=0.05$. This standard deviation can be changed, and additional noise calibration can be performed, but this is outside the scope of this study. To sum up, in this calibration problem, we only modify the sampler and its configuration.
 
-The pretrained RobustGaSP surrogate is exposed as an HTTP model using UM-Bridge. Each sampler connects to the same model server and sends candidate values of $\mu$ and $\xi$ through this interface. Although the surrogate computes full predictive statistics, the model server exposes only the predictive mean, which enters the Gaussian likelihood on the sampler side. 
+The RobustGaSP surrogate is exposed as an HTTP model using UM-Bridge. The samplers connect to the same model server with different server instances through this interface and send $\mu$ and $\xi$ values to it. Normally, the surrogate can provide full predictive statistics, but the model server returns only the predictive mean value, which is then used in the likelihood calculation within the sampling algorithm.
 
 \begin{lstlisting}
 output = self.model.predict(x)
@@ -17,11 +17,11 @@ return [output[:, 0].tolist()]
 # only column 0 = mean values are returned to the sampler
 \end{lstlisting}
 
-The server is configured with a single worker. Moreover, the exposed model currently provides function evaluations but no gradient information, which restricts the benchmark to gradient-free samplers.
+The UM-Bridge server is configured with a single worker. Also, in this study, we do not expose gradients through UM-Bridge. In addition, it has not been established whether RobustGaSP can provide the required gradients even if the server allowed us to access them. Therefore, gradient-based samplers are outside the scope of this report.
 
-The execution is orchestrated by a Nextflow workflow. It collects the surrogate and observation data, starts the UM-Bridge model server, and starts the process associated with the sampler selected in the configuration file. Each sampler runs in a separate Conda environment but receives the same configuration, observations, and model-server address. After sampling is complete, the model server is stopped and the generated outputs are passed to the common diagnostics and reporting processes.
+The whole process is orchestrated by a Nextflow workflow. It starts by collecting the surrogate and observation data and then creates the shared communication directory used by the UM-Bridge server. The workflow then starts the sampler process. The sampler waits until the server signals that it is ready, then sends proposed parameter values to the server during the sampling operation. After sampling is complete, the sampler writes its outputs and the server is stopped. The diagnostic and reporting processes are then executed.
 
-To be sure that the same diagnostics and report-generation steps can be applied to every sampler, all implementations follow a common output contract. Each sampler run produces a posterior trace, chain-structured samples, log-probability values (when available), the measured sampling runtime, the number of surrogate-model evaluations, a corner plot, and an ArviZ InferenceData file. The InferenceData (iData) representation is then used to generate trace, posterior, and autocorrelation plots together with effective sample size (ESS) and R-hat statistics where applicable. These files, the run configuration, and the automatically generated report are collected in the session's output folder.
+The same diagnostics and report-generation steps are applied to every sampler because all of the implementations follow a common output workflow. Each sampler produces a posterior trace, log-probability values if available, the measured sampling runtime, the number of surrogate-model evaluations, a corner plot, and an ArviZ InferenceData (iData) file. The iData representation is then used to generate trace, posterior, and autocorrelation plots, together with effective sample size (ESS) and R-hat diagnostic statistics, if applicable. These files, the run configuration, and the automatically generated report are collected in the session-specific output directory.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -31,17 +31,17 @@ To be sure that the same diagnostics and report-generation steps can be applied 
 \subsection{Random-Walk Metropolis-Hastings}
 \label{sec:integration-rwmh}
 
-The RWMH integration uses the custom \texttt{rwmcmc} package and evaluates the common log-posterior directly. Each chain is initialized independently from the configured prior distributions and executed serially with a separate random-number generator. The proposal step sizes can be configured separately for $\mu$ and $\xi$, allowing their different numerical scales to be accommodated. After sampling, the configured burn-in period is removed, the retained chains are reshaped to the common output format, and an ArviZ InferenceData object is constructed explicitly for the shared diagnostics.
+RWMH uses the custom \texttt{rwmcmc} package and evaluates the common log-posterior. The chains are initialized independently and executed serially, each with a separate random-number generator seed. The proposal step sizes can be configured separately for the parameters of interest, so different numerical scales of the parameters can be accommodated. After sampling, the configured burn-in period is removed, the chains are reshaped into the common output format, and an ArviZ iData object is written explicitly for the shared diagnostics.
 
 \subsection{emcee}
 \label{sec:integration-emcee}
 
-The emcee integration passes the same log-posterior function to an \texttt{EnsembleSampler}. Walker positions are initialized independently from the configured priors, while the number of walkers, number of sampling steps, and burn-in period are read from the common configuration. The package supports serial execution as well as thread- and process-based pools, although the present benchmark uses serial model evaluation. Following sampling, burn-in draws are removed and the emcee results are converted directly to the common arrays and ArviZ iData representation.
+The emcee integration passes the same log-posterior function to an \texttt{EnsembleSampler}. The walkers' positions are initialized independently. The number of walkers, sampling steps, and burn-in period can be modified in the configuration file. Normally, this package supports serial execution as well as thread- and process-level pools; however, the current benchmark uses only serial model evaluations. Following sampling, the configured burn-in period is removed from the saved posterior arrays. Similarly, after the output is converted to an iData object, the burn-in period is removed from that object as well.
 
 \subsection{dynesty}
 \label{sec:integration-dynesty}
 
-Unlike the MCMC integrations, dynesty requires the likelihood and prior to be supplied separately. A dedicated prior transform maps points from the unit hypercube to the configured parameter distributions using their inverse cumulative distribution functions. The static nested sampler is controlled through the number of live points, the evidence-based stopping tolerance, and the number of worker processes. Because dynesty returns weighted samples, these are converted into an equally weighted trace for compatibility with the common plotting and diagnostics interface. The estimated log-evidence and its uncertainty are additionally retained in the sampler output.
+The \texttt{dynesty} package implements nested sampling rather than an MCMC method. Therefore, the likelihood and prior are supplied separately. A transform map is used to map points from the unit hypercube to the configured parameter distributions using their inverse cumulative distribution functions. The nested sampler is controlled by the number of live points, the evidence-based stopping criterion, and the number of worker processes. By nature, nested sampling produces weighted samples, which are converted into an equally weighted trace in this implementation for compatibility with the common diagnostic tools. The estimated log-evidence and its uncertainty are additionally saved in the sampler output.
 
 \subsection{PyMC Slice and Sequential Monte Carlo}
 \label{sec:integration-pymc}
@@ -63,10 +63,4 @@ class UMBridgeLogLikelihood(Op):
         outputs[0][0] = np.asarray(value, dtype=np.float64)
 \end{lstlisting}
 
-Both PyMC integrations follow PyMC's documented black-box likelihood pattern by using the numerical UM-Bridge likelihood to PyTensor through the operation shown in Listing~\ref{lst:umbridge-pytensor} \autocite{Pitkin2024}. The operation accepts a "parameter" vector, evaluates the common likelihood through UM-Bridge, and returns a scalar log-likelihood. Since it defines numerical evaluation but no gradient operation, it is used with gradient-free sampling methods. The configured priors are recreated as PyMC random variables, and the external likelihood is added to the model as a potential. Both methods return an iData object directly, from which the posterior samples are reshaped into the common output format.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \section{Implementation Challenges and Solutions}
-% \label{sec:implementation-challenges}
-
+Both PyMC integrations follow PyMC's documented black-box likelihood pattern by passing the numerical UM-Bridge likelihood to PyTensor through the operation shown in Listing~\ref{lst:umbridge-pytensor} \autocite{Pitkin2024}. The operation accepts a "parameter" vector, evaluates the likelihood, and returns a scalar log-likelihood. Both methods return an iData object directly, from which the posterior samples are reshaped into the common output format.
