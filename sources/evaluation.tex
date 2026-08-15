@@ -281,6 +281,17 @@ The exact software versions used during the benchmark are reported in Section~\r
 
 During sampling, every exception raised by a surrogate-model evaluation is currently handled by assigning a log-likelihood of negative infinity. This prevents an individual failed evaluation from stopping the sampler, but it does not distinguish an invalid parameter proposal from a communication or implementation error. The preserved logs do not show that this behavior affected the reported executions, but such failures could be hidden if they occur.
 
+The same exception handling is used in all five sampler implementations:
+
+\begin{verbatim}
+try:
+    prediction_mean = np.asarray(
+        self.model([[*model_parameters]])
+    )
+except Exception:
+    return -np.inf
+\end{verbatim}
+
 The sampler settings were chosen as working configurations and were not optimized using a common criterion. Differences in computational performance may be related to both the sampling methods and their selected settings.
 
 A further limitation is the lack of a single comparison metric that is equally suitable for all five methods. RWMH and PyMC Slice produce conventional Markov chains, emcee uses an ensemble of interacting walkers, PyMC SMC produces particle populations, and dynesty produces weighted nested-sampling points. Effective sample size is calculated and interpreted differently for these outputs. Runtime and model-evaluation counts are more directly comparable, but they do not describe the quality of the posterior approximation on their own. The metrics used in this study provide a practical summary of the observed results, but they cannot support a fully equivalent comparison or a general ranking of the samplers.
